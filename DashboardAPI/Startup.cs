@@ -29,11 +29,18 @@ namespace WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+
+            //Uzkomentinau sita koda, ir naudojam tik DataContext su SQLserver:
+            services.AddDbContext<DataContext>();
+            //****
             // use sql server db in production and sqlite db in development
-            if (_env.IsProduction())
-                services.AddDbContext<DataContext>();
-            else
-                services.AddDbContext<DataContext, SqliteDataContext>();
+            //if (_env.IsProduction())
+            //    services.AddDbContext<DataContext>();
+            //else
+            //    services.AddDbContext<DataContext, SqliteDataContext>();
+            //****
+
 
             services.AddCors();
             services.AddControllers();
@@ -86,7 +93,8 @@ namespace WebApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DataContext dataContext)
         {
-            // migrate any database changes on startup (includes initial db creation)
+            //Sita eilute irgi uzkomentinau, nes mete errora, kai padariau migracija ir update DB:
+            //migrate any database changes on startup(includes initial db creation)
             dataContext.Database.Migrate();
 
             app.UseRouting();
