@@ -10,7 +10,7 @@ using WebApi.Models;
 
 namespace WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class LogsController : ControllerBase
     {
@@ -42,69 +42,18 @@ namespace WebApi.Controllers
             return logModel;
         }
 
-        // PUT: api/Logs/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutLogModel(int id, LogModel logModel)
-        {
-            if (id != logModel.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(logModel).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!LogModelExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         // POST: api/Logs
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+        //Work to do here later after Front End sends error.
         [HttpPost]
         public async Task<ActionResult<LogModel>> PostLogModel(LogModel logModel)
         {
+
+            logModel.Log_Date = DateTime.Now;
             _context.Logs.Add(logModel);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetLogModel", new { id = logModel.Id }, logModel);
         }
 
-        // DELETE: api/Logs/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<LogModel>> DeleteLogModel(int id)
-        {
-            var logModel = await _context.Logs.FindAsync(id);
-            if (logModel == null)
-            {
-                return NotFound();
-            }
-
-            _context.Logs.Remove(logModel);
-            await _context.SaveChangesAsync();
-
-            return logModel;
-        }
-
-        private bool LogModelExists(int id)
-        {
-            return _context.Logs.Any(e => e.Id == id);
-        }
     }
 }
