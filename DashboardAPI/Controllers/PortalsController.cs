@@ -10,7 +10,7 @@ using WebApi.Models;
 
 namespace WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class PortalsController : ControllerBase
     {
@@ -42,12 +42,26 @@ namespace WebApi.Controllers
             return portalModel;
         }
 
+        // POST: api/Portals
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
+        // more details see https://aka.ms/RazorPagesCRUD.
+        [HttpPost]
+        public async Task<ActionResult<PortalModel>> PostPortalModel(PortalModel portalModel)
+        {
+            portalModel.Date_Created = DateTime.Now;
+            _context.Portals.Add(portalModel);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetPortalModel", new { id = portalModel.Id }, portalModel);
+        }
+
         // PUT: api/Portals/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPortalModel(int id, PortalModel portalModel)
         {
+            portalModel.Id = id;
             if (id != portalModel.Id)
             {
                 return BadRequest();
@@ -74,20 +88,8 @@ namespace WebApi.Controllers
             return NoContent();
         }
 
-        // POST: api/Portals
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPost]
-        public async Task<ActionResult<PortalModel>> PostPortalModel(PortalModel portalModel)
-        {
-            _context.Portals.Add(portalModel);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetPortalModel", new { id = portalModel.Id }, portalModel);
-        }
-
-        // DELETE: api/Portals/5
-        [HttpDelete("{id}")]
+        // PUT for delete: api/Portals/5
+        [HttpPut("del/{id}")]
         public async Task<ActionResult<PortalModel>> DeletePortalModel(int id)
         {
             var portalModel = await _context.Portals.FindAsync(id);
@@ -96,7 +98,8 @@ namespace WebApi.Controllers
                 return NotFound();
             }
 
-            _context.Portals.Remove(portalModel);
+            portalModel.Deleted = true;
+            portalModel.Date_Deleted = DateTime.Now;
             await _context.SaveChangesAsync();
 
             return portalModel;

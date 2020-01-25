@@ -56,14 +56,17 @@ namespace WebApi.Migrations.SqlServerMigrations
                     b.Property<string>("Error_Code")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Error_Text")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Log_Date")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("Request_Ref")
                         .HasColumnType("int");
 
                     b.Property<string>("Request_Type")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Timestamp")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -80,10 +83,22 @@ namespace WebApi.Migrations.SqlServerMigrations
                     b.Property<string>("Admin_Email")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Created_By")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Date_Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Date_Deleted")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
                     b.Property<int>("Interval_Ms")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Modified_By")
                         .HasColumnType("int");
 
                     b.Property<string>("Url")
@@ -104,10 +119,22 @@ namespace WebApi.Migrations.SqlServerMigrations
                     b.Property<string>("Admin_Email")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Created_By")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Date_Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Date_Deleted")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
                     b.Property<int>("Interval_Ms")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Modified_By")
                         .HasColumnType("int");
 
                     b.Property<string>("Url")

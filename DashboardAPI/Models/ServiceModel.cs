@@ -1,4 +1,6 @@
-﻿namespace WebApi.Models
+﻿using System;
+
+namespace WebApi.Models
 {
     public class ServiceModel
     {
@@ -7,5 +9,9 @@
         public string Admin_Email { get; set; }
         public int Interval_Ms { get; set; }
         public bool Deleted { get; set; }
+        public DateTime Date_Created { get; set; }
+        public DateTime Date_Deleted { get; set; }
+        public int Created_By { get; set; }
+        public int Modified_By { get; set; }
     }
 }

@@ -10,7 +10,7 @@ using WebApi.Models;
 
 namespace WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ServicesController : ControllerBase
     {
@@ -41,13 +41,27 @@ namespace WebApi.Controllers
 
             return serviceModel;
         }
+        // POST: api/Services
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
+        // more details see https://aka.ms/RazorPagesCRUD.
+        [HttpPost]
+        public async Task<ActionResult<ServiceModel>> PostServiceModel(ServiceModel serviceModel)
+        {
+            serviceModel.Date_Created = DateTime.Now;
+            _context.Services.Add(serviceModel);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetServiceModel", new { id = serviceModel.Id }, serviceModel);
+        }
 
         // PUT: api/Services/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
         public async Task<IActionResult> PutServiceModel(int id, ServiceModel serviceModel)
-        {
+        {   
+            //This line is needed , so you don't have to write Id in request Body
+            serviceModel.Id = id;
             if (id != serviceModel.Id)
             {
                 return BadRequest();
@@ -74,29 +88,18 @@ namespace WebApi.Controllers
             return NoContent();
         }
 
-        // POST: api/Services
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPost]
-        public async Task<ActionResult<ServiceModel>> PostServiceModel(ServiceModel serviceModel)
-        {
-            _context.Services.Add(serviceModel);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetServiceModel", new { id = serviceModel.Id }, serviceModel);
-        }
-
-        // DELETE: api/Services/5
-        [HttpDelete("{id}")]
+        // PUT for delete: api/Services/5
+        [HttpPut("del/{id}")]
         public async Task<ActionResult<ServiceModel>> DeleteServiceModel(int id)
-        {
+        {  
             var serviceModel = await _context.Services.FindAsync(id);
             if (serviceModel == null)
             {
                 return NotFound();
             }
 
-            _context.Services.Remove(serviceModel);
+            serviceModel.Deleted = true;
+            serviceModel.Date_Deleted = DateTime.Now;
             await _context.SaveChangesAsync();
 
             return serviceModel;
