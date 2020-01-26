@@ -44,9 +44,14 @@ namespace WebApi.Controllers
         // POST: api/Services
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
+        // [Authorize]
         [HttpPost]
         public async Task<ActionResult<ServiceModel>> PostServiceModel(ServiceModel serviceModel)
         {
+            int userId = MiscFunctions.GetCurentUser(this.User);
+
+            serviceModel.Created_By = userId;
+            serviceModel.Date_Created = DateTime.Now;
             serviceModel.Date_Created = DateTime.Now;
             _context.Services.Add(serviceModel);
             await _context.SaveChangesAsync();
