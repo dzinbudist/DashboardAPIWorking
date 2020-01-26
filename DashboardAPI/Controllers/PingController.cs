@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Helpers;
+using WebApi.Services;
 
 namespace WebApi.Controllers
 {
@@ -13,73 +14,34 @@ namespace WebApi.Controllers
     [ApiController]
     public class PingController : ControllerBase
     {
-        private readonly DataContext _context;
-        public PingController(DataContext context)
+        private IPingService _pingService;
+        public PingController(IPingService pingService)
         {
-            _context = context;
+            _pingService = pingService;
         }
-
         [HttpGet("service/{id}")]
-        public async Task<ActionResult<PingResponse>> PingService(int id)
+        //Veliau paziureti, ar imanoma kitaip grazinti errorus/exceptionus is servico.
+        public ActionResult<PingResponse> PingService(int id)
         {
-            var serviceModel = await _context.Services.FindAsync(id);
-
-            if (serviceModel == null)
+            var response = _pingService.PingServiceFromDB(id);
+            if (response == null)
             {
-                return NotFound($"Service with id: {id} was not found in DB");
+                return NotFound($"Problem pinging service with id {id}");
             }
-            string hostname = serviceModel.Url;
-
-            Ping servicePing = new Ping();
-            try
-            {
-                var reply = servicePing.Send(hostname);
-                PingResponse serverResponse = new PingResponse
-                {
-                    Url_Pinged = serviceModel.Url,
-                    Status = reply.Status.ToString(),
-                    LatencyMS = reply.RoundtripTime
-                };
-
-                return serverResponse;
-            }
-            //Cia jei kazkas negerai su Ping, grazina 404 su exceptionu. Pakeisti veliau turbut.
-            catch(Exception e)
-            {
-                return NotFound($"Tried pinging: {hostname} \n {e}");
-            }
+            return response;
         }
-
         [HttpGet("portal/{id}")]
-        public async Task<ActionResult<PingResponse>> PingPortal(int id)
+        //Veliau paziureti, ar imanoma kitaip grazinti errorus/exceptionus is servico.
+        public ActionResult<PingResponse> PingPortal(int id)
         {
-            var portalModel = await _context.Portals.FindAsync(id);
-
-            if (portalModel == null)
+            var response = _pingService.PingPortalFromDB(id);
+            if (response == null)
             {
-                return NotFound($"Portal with id: {id} was not found in DB");
+                return NotFound($"Problem pinging portal with id {id}");
             }
-            string hostname = portalModel.Url;
-
-            Ping portalPing = new Ping();
-            try
-            {
-                var reply = portalPing.Send(hostname);
-                PingResponse serverResponse = new PingResponse
-                {
-                    Url_Pinged = portalModel.Url,
-                    Status = reply.Status.ToString(),
-                    LatencyMS = reply.RoundtripTime
-                };
-
-                return serverResponse;
-            }
-            //Cia jei kazkas negerai su Ping, grazina 404 su exceptionu. Pakeisti veliau turbut.
-            catch (Exception e)
-            {
-                return NotFound($"Tried pinging: {hostname} \n {e}");
-            }
+            return response;
         }
+
     }
 }
 
