@@ -15,7 +15,6 @@ namespace WebApi.Controllers
     public class ServicesController : ControllerBase
     {
         private readonly DataContext _context;
-
         public ServicesController(DataContext context)
         {
             _context = context;
@@ -48,11 +47,10 @@ namespace WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<ServiceModel>> PostServiceModel(ServiceModel serviceModel)
         {
-            int userId = MiscFunctions.GetCurentUser(this.User);
 
-            serviceModel.Created_By = userId;
+            serviceModel.Created_By = MiscFunctions.GetCurentUser(this.User);
             serviceModel.Date_Created = DateTime.Now;
-            serviceModel.Date_Created = DateTime.Now;
+
             _context.Services.Add(serviceModel);
             await _context.SaveChangesAsync();
 
@@ -67,10 +65,13 @@ namespace WebApi.Controllers
         {   
             //This line is needed , so you don't have to write Id in request Body
             serviceModel.Id = id;
+
             if (id != serviceModel.Id)
             {
                 return BadRequest();
             }
+            serviceModel.Modified_By = MiscFunctions.GetCurentUser(this.User);
+            serviceModel.Date_Modified = DateTime.Now;
 
             _context.Entry(serviceModel).State = EntityState.Modified;
 
@@ -103,8 +104,9 @@ namespace WebApi.Controllers
                 return NotFound();
             }
 
-            serviceModel.Deleted = true;
+            serviceModel.Modified_By = MiscFunctions.GetCurentUser(this.User);
             serviceModel.Date_Modified = DateTime.Now;
+            serviceModel.Deleted = true;
             await _context.SaveChangesAsync();
 
             return serviceModel;

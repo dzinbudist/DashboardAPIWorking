@@ -48,7 +48,10 @@ namespace WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<PortalModel>> PostPortalModel(PortalModel portalModel)
         {
+
+            portalModel.Created_By = MiscFunctions.GetCurentUser(this.User);
             portalModel.Date_Created = DateTime.Now;
+
             _context.Portals.Add(portalModel);
             await _context.SaveChangesAsync();
 
@@ -66,6 +69,9 @@ namespace WebApi.Controllers
             {
                 return BadRequest();
             }
+
+            portalModel.Modified_By = MiscFunctions.GetCurentUser(this.User);
+            portalModel.Date_Modified = DateTime.Now;
 
             _context.Entry(portalModel).State = EntityState.Modified;
 
@@ -98,6 +104,8 @@ namespace WebApi.Controllers
                 return NotFound();
             }
 
+            portalModel.Modified_By = MiscFunctions.GetCurentUser(this.User);
+            portalModel.Date_Modified = DateTime.Now;
             portalModel.Deleted = true;
             portalModel.Date_Modified = DateTime.Now;
             await _context.SaveChangesAsync();

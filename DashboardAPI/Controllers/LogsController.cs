@@ -41,19 +41,5 @@ namespace WebApi.Controllers
 
             return logModel;
         }
-
-        // POST: api/Logs
-        //Work to do here later after Front End sends error.
-        [HttpPost]
-        public async Task<ActionResult<LogModel>> PostLogModel(LogModel logModel)
-        {
-
-            logModel.Log_Date = DateTime.Now;
-            _context.Logs.Add(logModel);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetLogModel", new { id = logModel.Id }, logModel);
-        }
-
     }
 }
