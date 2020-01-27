@@ -99,7 +99,7 @@ namespace WebApi.Controllers
             }
 
             portalModel.Deleted = true;
-            portalModel.Date_Deleted = DateTime.Now;
+            portalModel.Date_Modified = DateTime.Now;
             await _context.SaveChangesAsync();
 
             return portalModel;

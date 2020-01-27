@@ -104,7 +104,7 @@ namespace WebApi.Controllers
             }
 
             serviceModel.Deleted = true;
-            serviceModel.Date_Deleted = DateTime.Now;
+            serviceModel.Date_Modified = DateTime.Now;
             await _context.SaveChangesAsync();
 
             return serviceModel;
