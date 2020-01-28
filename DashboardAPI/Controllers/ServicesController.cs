@@ -43,13 +43,14 @@ namespace WebApi.Controllers
         // POST: api/Services
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
-        // [Authorize]
+
         [HttpPost]
         public async Task<ActionResult<ServiceModel>> PostServiceModel(ServiceModel serviceModel)
         {
 
-            serviceModel.Created_By = MiscFunctions.GetCurentUser(this.User);
+            //serviceModel.Created_By = MiscFunctions.GetCurentUser(this.User);
             serviceModel.Date_Created = DateTime.Now;
+
 
             _context.Services.Add(serviceModel);
             await _context.SaveChangesAsync();
@@ -61,37 +62,17 @@ namespace WebApi.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutServiceModel(int id, ServiceModel serviceModel)
-        {   
-            //This line is needed , so you don't have to write Id in request Body
-            serviceModel.Id = id;
+        public async Task<ActionResult<ServiceModel>> PutServiceModel(int id, ServiceModel serviceModel)
+        {
 
-            if (id != serviceModel.Id)
-            {
-                return BadRequest();
-            }
-            serviceModel.Modified_By = MiscFunctions.GetCurentUser(this.User);
-            serviceModel.Date_Modified = DateTime.Now;
+            var updatedModel =await _context.Services.FindAsync(id);
 
-            _context.Entry(serviceModel).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ServiceModelExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            //updatedModel.Modified_By = MiscFunctions.GetCurentUser(this.User);
+            updatedModel.Date_Modified = DateTime.Now;
+            _context.Entry(updatedModel).State = EntityState.Modified; //ar reikia sitos eilutes?
+            _context.Services.Update(updatedModel);
+            _context.SaveChanges();
+            return updatedModel;
         }
 
         // PUT for delete: api/Services/5
@@ -104,17 +85,12 @@ namespace WebApi.Controllers
                 return NotFound();
             }
 
-            serviceModel.Modified_By = MiscFunctions.GetCurentUser(this.User);
+            //serviceModel.Modified_By = MiscFunctions.GetCurentUser(this.User);
             serviceModel.Date_Modified = DateTime.Now;
             serviceModel.Deleted = true;
             await _context.SaveChangesAsync();
 
             return serviceModel;
-        }
-
-        private bool ServiceModelExists(int id)
-        {
-            return _context.Services.Any(e => e.Id == id);
         }
     }
 }

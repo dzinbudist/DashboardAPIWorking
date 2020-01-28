@@ -45,13 +45,15 @@ namespace WebApi.Controllers
         // POST: api/Portals
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
+        
+            //Sita postinant papublishinus created by ir date created buna default values, neuzsimeta kas cia parasyta.
         [HttpPost]
         public async Task<ActionResult<PortalModel>> PostPortalModel(PortalModel portalModel)
         {
 
-            portalModel.Created_By = MiscFunctions.GetCurentUser(this.User);
+            //portalModel.Created_By = MiscFunctions.GetCurentUser(this.User);
             portalModel.Date_Created = DateTime.Now;
-
+ 
             _context.Portals.Add(portalModel);
             await _context.SaveChangesAsync();
 
@@ -62,36 +64,16 @@ namespace WebApi.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPortalModel(int id, PortalModel portalModel)
+        public async Task<ActionResult<PortalModel>> PutPortalModel(int id, PortalModel portalModel)
         {
-            portalModel.Id = id;
-            if (id != portalModel.Id)
-            {
-                return BadRequest();
-            }
+            var updatedModel = await _context.Portals.FindAsync(id);
 
-            portalModel.Modified_By = MiscFunctions.GetCurentUser(this.User);
-            portalModel.Date_Modified = DateTime.Now;
-
-            _context.Entry(portalModel).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PortalModelExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            //updatedModel.Modified_By = MiscFunctions.GetCurentUser(this.User);
+            updatedModel.Date_Modified = DateTime.Now;
+            _context.Entry(updatedModel).State = EntityState.Modified; //ar reikia sitos eilutes?
+            _context.Portals.Update(updatedModel);
+            _context.SaveChanges();
+            return updatedModel;
         }
 
         // PUT for delete: api/Portals/5
@@ -104,18 +86,12 @@ namespace WebApi.Controllers
                 return NotFound();
             }
 
-            portalModel.Modified_By = MiscFunctions.GetCurentUser(this.User);
+            //portalModel.Modified_By = MiscFunctions.GetCurentUser(this.User);
             portalModel.Date_Modified = DateTime.Now;
             portalModel.Deleted = true;
-            portalModel.Date_Modified = DateTime.Now;
             await _context.SaveChangesAsync();
 
             return portalModel;
-        }
-
-        private bool PortalModelExists(int id)
-        {
-            return _context.Portals.Any(e => e.Id == id);
         }
     }
 }
