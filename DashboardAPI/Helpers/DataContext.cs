@@ -22,7 +22,6 @@ namespace WebApi.Helpers
 
         public DbSet<User> Users { get; set; }
         public DbSet<LogModel> Logs { get; set; }
-        public DbSet<PortalModel> Portals { get; set; }
-        public DbSet<ServiceModel> Services { get; set; }
+        public DbSet<DomainModel> Domains { get; set; }
     }
 }

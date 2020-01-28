@@ -19,29 +19,17 @@ namespace WebApi.Controllers
         {
             _pingService = pingService;
         }
-        [HttpGet("service/{id}")]
+        [HttpGet("domain/{id}")]
         //Veliau paziureti, ar imanoma kitaip grazinti errorus/exceptionus is servico.
         public ActionResult<PingResponse> PingService(int id)
         {
-            var response = _pingService.PingServiceFromDB(id);
+            var response = _pingService.PingDomainFromDB(id);
             if (response == null)
             {
                 return NotFound($"Problem pinging service with id {id}");
             }
             return response;
         }
-        [HttpGet("portal/{id}")]
-        //Veliau paziureti, ar imanoma kitaip grazinti errorus/exceptionus is servico.
-        public ActionResult<PingResponse> PingPortal(int id)
-        {
-            var response = _pingService.PingPortalFromDB(id);
-            if (response == null)
-            {
-                return NotFound($"Problem pinging portal with id {id}");
-            }
-            return response;
-        }
-
     }
 }
 
