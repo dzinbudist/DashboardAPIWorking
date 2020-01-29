@@ -26,7 +26,7 @@ namespace WebApi.Controllers
             var response = _pingService.PingDomainFromDB(id);
             if (response == null)
             {
-                return NotFound($"Problem pinging service with id {id}");
+                return NotFound(new { message = $"Problem pinging service with id {id}" });
             }
             return response;
         }
