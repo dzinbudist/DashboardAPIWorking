@@ -42,7 +42,8 @@ namespace WebApi.Services
                     _context.SaveChanges();
                 }
                 PingResponse serverResponse = new PingResponse
-                {
+                {   
+                    //pingas neturi status code
                     Url_Pinged = domainModel.Url,
                     Status = reply.Status.ToString(),
                     LatencyMS = reply.RoundtripTime

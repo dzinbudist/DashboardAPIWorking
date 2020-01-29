@@ -20,14 +20,14 @@ namespace WebApi.Controllers
             _context = context;
         }
 
-        // GET: api/Domains
+        // GET: api/Domain
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DomainModel>>> GetDomains()
         {
             return await _context.Domains.ToListAsync();
         }
 
-        // GET: api/Domains/5
+        // GET: api/Domain/5
         [HttpGet("{id}")]
         public async Task<ActionResult<DomainModel>> GetDomainModel(int id)
         {
@@ -40,41 +40,101 @@ namespace WebApi.Controllers
 
             return DomainModel;
         }
-        // POST: api/Domains
+        // POST: api/Domain
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
 
         [HttpPost]
-        public async Task<ActionResult<DomainModel>> PostDomainModel(DomainModel DomainModel)
+        public async Task<ActionResult<DomainModel>> PostDomainModel(DomainModel domainModel)
         {
+            if (ModelState.IsValid) //validacija backendo. patikrina ar yra visi required fieldai modeli.
+            {
 
-            //DomainModel.Created_By = MiscFunctions.GetCurentUser(this.User);
-            DomainModel.Date_Created = DateTime.Now;
+                DomainModel newModel = domainModel;
+                newModel.Created_By = default; // dbr default poto:
+                //newModel.Created_By = MiscFunctions.GetCurentUser(this.User);
+                newModel.Modified_By = default;
+                newModel.Last_Fail = default;
+                newModel.Date_Created = DateTime.Now;
+                newModel.Date_Modified = DateTime.Now;
+                
+                _context.Domains.Add(newModel);
+                await _context.SaveChangesAsync();
 
-            _context.Domains.Add(DomainModel);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetDomainModel", new { id = DomainModel.Id }, DomainModel);
+                return CreatedAtAction("GetDomainModel", new { id = domainModel.Id }, domainModel);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
-        // PUT: api/Domains/5
+        // PUT: api/Domain/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<ActionResult<DomainModel>> PutDomainModel(int id, DomainModel DomainModel)
+        public async Task<ActionResult<DomainModel>> EditDomainModel(int id, DomainModel domainModel)
         {
 
-            var updatedModel =await _context.Domains.FindAsync(id);
+            if (ModelState.IsValid)
+            {
+                var updatedModel = await _context.Domains.FindAsync(id);
+                //galima su automapper nugetu graziai surasyti sintaxe.
+                if (updatedModel.Service_Name != domainModel.Service_Name)
+                {
+                    updatedModel.Service_Name = domainModel.Service_Name;
+                }
+                if (updatedModel.Url != domainModel.Url)
+                {
+                    updatedModel.Url = domainModel.Url;
+                }
+                if (updatedModel.Service_Type != domainModel.Service_Type)
+                {
+                    updatedModel.Service_Type = domainModel.Service_Type;
+                }
+                if (updatedModel.Method != domainModel.Method)
+                {
+                    updatedModel.Method = domainModel.Method;
+                }
+                if (updatedModel.Basic_Auth != domainModel.Basic_Auth)
+                {
+                    updatedModel.Basic_Auth = domainModel.Basic_Auth;
+                    if (updatedModel.Basic_Auth == false)
+                    {
+                        updatedModel.Auth_User = null;
+                        updatedModel.Auth_Password = null;
+                    }
+                    updatedModel.Auth_User = domainModel.Auth_User;
+                    updatedModel.Auth_Password = domainModel.Auth_Password;
+                }
+                if (updatedModel.Parameters != domainModel.Parameters)
+                {
+                    updatedModel.Parameters = domainModel.Parameters;
+                }
+                if (updatedModel.Notification_Email != domainModel.Notification_Email)
+                {
+                    updatedModel.Notification_Email = domainModel.Notification_Email;
+                }
+                if (updatedModel.Interval_Ms != domainModel.Interval_Ms)
+                {
+                    updatedModel.Interval_Ms = domainModel.Interval_Ms;
+                }
+                if (updatedModel.Active != domainModel.Active)
+                {
+                    updatedModel.Active = domainModel.Active;
+                }
+                //updatedModel.Modified_By = MiscFunctions.GetCurentUser(this.User);    
+                updatedModel.Date_Modified = DateTime.Now;
 
-            //updatedModel.Modified_By = MiscFunctions.GetCurentUser(this.User);
-            updatedModel.Date_Modified = DateTime.Now;
-            _context.Entry(updatedModel).State = EntityState.Modified; //ar reikia sitos eilutes?
-            _context.Domains.Update(updatedModel);
-            _context.SaveChanges();
-            return updatedModel;
+                _context.Entry(updatedModel).State = EntityState.Modified; //ar reikia sitos eilutes?
+                _context.Domains.Update(updatedModel);
+                _context.SaveChanges();
+                return updatedModel;
+            }
+            return BadRequest();
         }
 
-        // PUT for delete: api/Domains/5
+        // PUT for delete: api/Domain/5
         [HttpPut("del/{id}")]
         public async Task<ActionResult<DomainModel>> DeleteDomainModel(int id)
         {  
