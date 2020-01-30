@@ -46,7 +46,8 @@ namespace WebApi.Services
                     //pingas neturi status code
                     Url_Pinged = domainModel.Url,
                     Status = reply.Status.ToString(),
-                    LatencyMS = reply.RoundtripTime
+                    LatencyMS = reply.RoundtripTime,
+                    domainModel.Last_Fail
                 };
 
                 return serverResponse;
