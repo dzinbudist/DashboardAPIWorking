@@ -68,6 +68,7 @@ namespace WebApi.Services
 
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
+            user.Role = Role.Admin;
 
             _context.Users.Add(user);
             _context.SaveChanges();
@@ -98,6 +99,10 @@ namespace WebApi.Services
 
             if (!string.IsNullOrWhiteSpace(userParam.LastName))
                 user.LastName = userParam.LastName;
+
+            //if (!string.IsNullOrWhiteSpace(userParam.Role))
+                //user.Role = userParam.Role;
+            user.Role = Role.Admin;
 
             // update password if provided
             if (!string.IsNullOrWhiteSpace(password))
