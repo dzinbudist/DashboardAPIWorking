@@ -21,4 +21,8 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.6.0" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WebApi.Business\WebApi.Business.csproj" />
+    <ProjectReference Include="..\WebApi.Data\WebApi.Data.csproj" />
+  </ItemGroup>
 </Project>

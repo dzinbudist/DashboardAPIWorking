@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WebApi.Data.Data;
+using WebApi.Data.Entities;
 using WebApi.Helpers;
 using WebApi.Models;
 

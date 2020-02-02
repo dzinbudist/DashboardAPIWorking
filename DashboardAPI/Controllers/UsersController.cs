@@ -9,10 +9,11 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using WebApi.Services;
-using WebApi.Entities;
 using WebApi.Models.Users;
 using System.Net.NetworkInformation;
+using WebApi.Business.Models;
+using WebApi.Business.Services;
+using WebApi.Data.Entities;
 
 namespace WebApi.Controllers
 {

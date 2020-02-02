@@ -5,9 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WebApi.Business.Services;
+using WebApi.Data.Entities;
 using WebApi.Helpers;
 using WebApi.Models;
-using WebApi.Services;
 
 namespace WebApi.Controllers
 {
