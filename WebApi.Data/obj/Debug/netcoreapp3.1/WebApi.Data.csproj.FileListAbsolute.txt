@@ -36,3 +36,11 @@ C:\Users\Dellas\Desktop\DashboardAPIWorking\WebApi.Data\bin\Debug\netcoreapp3.1\
 C:\Users\Dellas\Desktop\DashboardAPIWorking\WebApi.Data\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Hosting.Server.Abstractions.xml
 C:\Users\Dellas\Desktop\DashboardAPIWorking\WebApi.Data\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Hosting.Abstractions.xml
 C:\Users\Dellas\Desktop\DashboardAPIWorking\WebApi.Data\obj\Debug\netcoreapp3.1\WebApi.Data.csproj.CopyComplete
+C:\Users\Developer\Documents\GitHub\Projektas\DashboardAPIWorking\DashboardAPIWorking\WebApi.Data\bin\Debug\netcoreapp3.1\WebApi.Data.deps.json
+C:\Users\Developer\Documents\GitHub\Projektas\DashboardAPIWorking\DashboardAPIWorking\WebApi.Data\bin\Debug\netcoreapp3.1\WebApi.Data.dll
+C:\Users\Developer\Documents\GitHub\Projektas\DashboardAPIWorking\DashboardAPIWorking\WebApi.Data\bin\Debug\netcoreapp3.1\WebApi.Data.pdb
+C:\Users\Developer\Documents\GitHub\Projektas\DashboardAPIWorking\DashboardAPIWorking\WebApi.Data\obj\Debug\netcoreapp3.1\WebApi.Data.csprojAssemblyReference.cache
+C:\Users\Developer\Documents\GitHub\Projektas\DashboardAPIWorking\DashboardAPIWorking\WebApi.Data\obj\Debug\netcoreapp3.1\WebApi.Data.AssemblyInfoInputs.cache
+C:\Users\Developer\Documents\GitHub\Projektas\DashboardAPIWorking\DashboardAPIWorking\WebApi.Data\obj\Debug\netcoreapp3.1\WebApi.Data.AssemblyInfo.cs
+C:\Users\Developer\Documents\GitHub\Projektas\DashboardAPIWorking\DashboardAPIWorking\WebApi.Data\obj\Debug\netcoreapp3.1\WebApi.Data.dll
+C:\Users\Developer\Documents\GitHub\Projektas\DashboardAPIWorking\DashboardAPIWorking\WebApi.Data\obj\Debug\netcoreapp3.1\WebApi.Data.pdb
