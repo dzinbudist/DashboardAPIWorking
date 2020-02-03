@@ -92,6 +92,7 @@ namespace WebApi
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IPingService, PingService>();
             services.AddScoped<IDomainService, DomainService>();
+            services.AddScoped<ILogsService, LogsService>();
 
         }
 

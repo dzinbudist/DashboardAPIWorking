@@ -22,6 +22,7 @@ namespace WebApi.Business.DTOs.Domains
         [Required]
         [EmailAddress]
         public string Notification_Email { get; set; }
+        [Range(3000, int.MaxValue, ErrorMessage = "Interval ms value must be more than 3000")]
         public int Interval_Ms { get; set; } = 600000; //default, jei nieko neiveda is front-end
         public bool Active { get; set; } = true; //Default reiksme
     }

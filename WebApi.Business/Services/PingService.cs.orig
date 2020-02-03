@@ -48,12 +48,19 @@ namespace WebApi.Business.Services
                 return null;
             }
             var hostname = domainModel.Url;
-                    {
+<<<<<<< HEAD
+            var domainPing = new Ping();
+            try
+            {
+                var reply = domainPing.Send(hostname);
+                if (reply != null && reply.Status == IPStatus.Success)
+                {
                     var response = new
                     {
                         Url_Pinged = domainModel.Url,
                         Status = reply.Status.ToString(),
                         LatencyMS = reply.RoundtripTime
+                    };
                     domainModel.Last_Fail = DateTime.Now;
                     // new LogModel entity added to Database
                     var logEntry = new LogModel
@@ -68,9 +75,22 @@ namespace WebApi.Business.Services
                     return response;
                 }
                 else
-
+                {
                     return null;
                 }
+            }
+            catch
+            {
+                return null;
+            }
+=======
+
+            GetService();
+
+            return null; // sita istrint
+
+
+
             //var domainPing = new Ping();
             //try
             //{
@@ -98,6 +118,7 @@ namespace WebApi.Business.Services
             //{
             //    return null;
             //}
+>>>>>>> origin/Developer
         }
     }
 
