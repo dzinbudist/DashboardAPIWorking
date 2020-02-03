@@ -2,7 +2,7 @@
 
 namespace WebApi.Data.Migrations.SqlServerMigrations
 {
-    public partial class log_changed : Migration
+    public partial class LogChanged : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

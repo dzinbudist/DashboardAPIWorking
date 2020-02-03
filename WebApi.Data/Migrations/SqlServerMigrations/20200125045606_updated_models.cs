@@ -2,7 +2,7 @@
 
 namespace WebApi.Data.Migrations.SqlServerMigrations
 {
-    public partial class updated_models : Migration
+    public partial class UpdatedModels : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

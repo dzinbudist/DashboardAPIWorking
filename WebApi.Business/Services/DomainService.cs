@@ -1,7 +1,8 @@
-﻿using System;
+﻿using AutoMapper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
+using WebApi.Business.DTOs.Domains;
 using WebApi.Data.Data;
 using WebApi.Data.Entities;
 
@@ -9,59 +10,60 @@ namespace WebApi.Business.Services
 {
     public interface IDomainService
     {
-        DomainModel GetById(int id);
-        IEnumerable<DomainModel> GetAllNotDeleted();
-        DomainModel Create(DomainModel domainModel);
-        DomainModel Update(int id, DomainModel domainModel);
-        DomainModel PseudoDelete(int id);
+        DomainModelDto GetById(int id);
+        IEnumerable<DomainModelDto> GetAllNotDeleted();
+        void Create(DomainForCreationDto domain);
+        object Update(int id, DomainForUpdateDto domain);
+        object PseudoDelete(int id);
     }
     public class DomainService : IDomainService
     {
-        private DataContext _context;
-        public DomainService(DataContext context)
+        private readonly DataContext _context;
+        private readonly IMapper _mapper;
+        public DomainService(DataContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
-        public DomainModel Create(DomainModel domainModel)
+        public void Create(DomainForCreationDto domain)
         {
-            DomainModel newModel = domainModel;
-            newModel.Created_By = default; // dbr default poto:
-            //newModel.Created_By = MiscFunctions.GetCurentUser(this.User);
-            newModel.Modified_By = default;
-            newModel.Last_Fail = default;
-            newModel.Date_Created = DateTime.Now;
-            newModel.Date_Modified = DateTime.Now;
+            var domainEntity = _mapper.Map<DomainModel>(domain);
 
-            _context.Domains.Add(newModel);
+            // dbr default poto:
+            //domainEntity.Created_By = MiscFunctions.GetCurentUser(this.User);
+
+
+            _context.Domains.Add(domainEntity);
             //if(newModel.Id != default) // jei per postmana, bando atsiust ID. Padaryta del grazaus response, nes bet kokiu atveju i DB neideda i Identity column.
             try
             {
-               _context.SaveChanges();
+                _context.SaveChanges();
             }
-            catch(Exception)
+            catch (Exception)
             {
-                return null; 
+                // ignored
             }
-            
-            return newModel;
         }
 
-        public IEnumerable<DomainModel> GetAllNotDeleted()
+        public IEnumerable<DomainModelDto> GetAllNotDeleted()
         {
-            return _context.Domains.Where(x => x.Deleted == false).ToList();
+            var domains = _context.Domains.Where(x => x.Deleted == false).ToList();
+            var domainsDto = _mapper.Map<IEnumerable<DomainModelDto>>(domains);
+            return domainsDto;
         }
 
-        public DomainModel GetById(int id)
+        public DomainModelDto GetById(int id)
         {
-            DomainModel domainModel = _context.Domains.Find(id);
-            return domainModel;
+            var domain = _context.Domains.Find(id);
+            var domainDto = _mapper.Map<DomainModelDto>(domain);
+            return domainDto;
         }
 
-        public DomainModel PseudoDelete(int id)
+        public object PseudoDelete(int id)
         {
 
-            DomainModel domainModel = _context.Domains.Find(id);
-            if(domainModel == null)
+            var domainModel = _context.Domains.Find(id);
+            if (domainModel == null)
             {
                 return null;
             }
@@ -69,63 +71,23 @@ namespace WebApi.Business.Services
             domainModel.Date_Modified = DateTime.Now;
             domainModel.Deleted = true;
             _context.SaveChanges(); // kazkaip veikia, bet keista, nes mes kitam objektui pridedam viska.
-            return domainModel;
+            return new { message = $"Domain with {id} id deleted" };
         }
 
-        public DomainModel Update(int id, DomainModel domainModel)
+        public object Update(int id, DomainForUpdateDto domain)
         {
             var updatedModel = _context.Domains.Find(id);
-            //galima su automapper nugetu graziai surasyti sintaxe.
-            if (updatedModel.Service_Name != domainModel.Service_Name)
+            if (updatedModel == null)
             {
-                updatedModel.Service_Name = domainModel.Service_Name;
+                return null;
             }
-            if (updatedModel.Url != domainModel.Url)
-            {
-                updatedModel.Url = domainModel.Url;
-            }
-            if (updatedModel.Service_Type != domainModel.Service_Type)
-            {
-                updatedModel.Service_Type = domainModel.Service_Type;
-            }
-            if (updatedModel.Method != domainModel.Method)
-            {
-                updatedModel.Method = domainModel.Method;
-            }
-            if (updatedModel.Basic_Auth != domainModel.Basic_Auth)
-            {
-                updatedModel.Basic_Auth = domainModel.Basic_Auth;
-                if (updatedModel.Basic_Auth == false)
-                {
-                    updatedModel.Auth_User = null;
-                    updatedModel.Auth_Password = null;
-                }
-                updatedModel.Auth_User = domainModel.Auth_User;
-                updatedModel.Auth_Password = domainModel.Auth_Password;
-            }
-            if (updatedModel.Parameters != domainModel.Parameters)
-            {
-                updatedModel.Parameters = domainModel.Parameters;
-            }
-            if (updatedModel.Notification_Email != domainModel.Notification_Email)
-            {
-                updatedModel.Notification_Email = domainModel.Notification_Email;
-            }
-            if (updatedModel.Interval_Ms != domainModel.Interval_Ms)
-            {
-                updatedModel.Interval_Ms = domainModel.Interval_Ms;
-            }
-            if (updatedModel.Active != domainModel.Active)
-            {
-                updatedModel.Active = domainModel.Active;
-            }
+
             //updatedModel.Modified_By = MiscFunctions.GetCurentUser(this.User);    
             updatedModel.Date_Modified = DateTime.Now;
-
-            _context.Entry(updatedModel).State = EntityState.Modified; //ar reikia sitos eilutes?
+            _mapper.Map(domain, updatedModel);
             _context.Domains.Update(updatedModel);
             _context.SaveChanges();
-            return updatedModel;
+            return new { message = $"Updated domain with {id} id" };
         }
     }
 }

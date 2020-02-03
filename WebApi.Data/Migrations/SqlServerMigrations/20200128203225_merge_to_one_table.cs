@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WebApi.Data.Migrations.SqlServerMigrations
 {
-    public partial class merge_to_one_table : Migration
+    public partial class MergeToOneTable : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

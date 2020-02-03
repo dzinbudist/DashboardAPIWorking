@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net.NetworkInformation;
-using WebApi.Business.Models;
 using WebApi.Data.Data;
 using WebApi.Data.Entities;
 
@@ -8,46 +7,47 @@ namespace WebApi.Business.Services
 {
     public interface IPingService
     {
-        PingResponse PingDomainFromDB(int id);
+        object PingDomainFromDb(int id);
     }
 
     public class PingService : IPingService
     {
-        private DataContext _context;
+        private readonly DataContext _context;
         public PingService(DataContext context)
         {
             _context = context;
         }
-        //cia noretusi grazint daugiau info, bet controleriui reik tik pingresponse
-        public PingResponse PingDomainFromDB(int id)
+
+        public object PingDomainFromDb(int id)
         {
             var domainModel = _context.Domains.Find(id);
             if (domainModel == null)
             {
                 return null;
             }
-            string hostname = domainModel.Url;
-            Ping domainPing = new Ping();
+            var hostname = domainModel.Url;
+            var domainPing = new Ping();
             try
             {
                 var reply = domainPing.Send(hostname);
-                if(reply.Status != IPStatus.Success)
+                if (reply != null && reply.Status == IPStatus.Success)
+                    return new
+                    {
+                        Url_Pinged = domainModel.Url, Status = reply.Status.ToString(), LatencyMS = reply.RoundtripTime
+                    };
+                domainModel.Last_Fail = DateTime.Now;
+                // new LogModel entity added to Database
+                var logEntry = new LogModel
                 {
-                    DateTime currentTime = DateTime.Now;
-                    domainModel.Last_Fail = currentTime;
-                    LogModel log_entry = new LogModel {Domain_Id = domainModel.Id, Log_Date = currentTime, Error_Text = reply.Status.ToString()};
-                    _context.Add(log_entry);
-                    _context.SaveChanges();
-                }
-                PingResponse serverResponse = new PingResponse
-                {   
-                    //pingas neturi status code
-                    Url_Pinged = domainModel.Url,
-                    Status = reply.Status.ToString(),
-                    LatencyMS = reply.RoundtripTime
+                    Domain_Id = domainModel.Id, Log_Date = DateTime.Now, Error_Text = reply.Status.ToString()
                 };
+                _context.Logs.Add(logEntry);
+                _context.SaveChanges();
 
-                return serverResponse;
+                return new
+                {
+                    Url_Pinged = domainModel.Url, Status = reply.Status.ToString(), LatencyMS = reply.RoundtripTime
+                };
             }
             catch
             {

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WebApi.Data.Migrations.SqlServerMigrations
 {
-    public partial class added_last_fail_field : Migration
+    public partial class AddedLastFailField : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

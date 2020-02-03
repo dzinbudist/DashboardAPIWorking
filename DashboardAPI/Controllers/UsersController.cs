@@ -9,9 +9,9 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using WebApi.Models.Users;
 using System.Net.NetworkInformation;
-using WebApi.Business.Models;
+using WebApi.Business.CustomExceptions;
+using WebApi.Business.DTOs.Users;
 using WebApi.Business.Services;
 using WebApi.Data.Entities;
 
@@ -22,8 +22,8 @@ namespace WebApi.Controllers
     [Route("[controller]")]
     public class UsersController : ControllerBase
     {
-        private IUserService _userService;
-        private IMapper _mapper;
+        private readonly IUserService _userService;
+        private readonly IMapper _mapper;
         private readonly AppSettings _appSettings;
 
         public UsersController(
@@ -38,7 +38,7 @@ namespace WebApi.Controllers
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
-        public IActionResult Authenticate([FromBody]AuthenticateModel model)
+        public IActionResult Authenticate([FromBody]AuthenticateModelDto model)
         {
             var user = _userService.Authenticate(model.Username, model.Password);
 
@@ -74,7 +74,7 @@ namespace WebApi.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public IActionResult Register([FromBody]RegisterModel model)
+        public IActionResult Register([FromBody]RegisterModelDto model)
         {
             // map model to entity
             var user = _mapper.Map<User>(model);
@@ -96,7 +96,7 @@ namespace WebApi.Controllers
         public IActionResult GetAll()
         {
             var users = _userService.GetAll();
-            var model = _mapper.Map<IList<UserModel>>(users);
+            var model = _mapper.Map<IList<UserModelDto>>(users);
             return Ok(model);
         }
 
@@ -104,13 +104,13 @@ namespace WebApi.Controllers
         public IActionResult GetById(int id)
         {
             var user = _userService.GetById(id);
-            var model = _mapper.Map<UserModel>(user);
+            var model = _mapper.Map<UserModelDto>(user);
             return Ok(model);
         }
 
         //uthorize(Roles = Role.Admin)]
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody]UpdateModel model)
+        public IActionResult Update(int id, [FromBody]UpdateModelDto model)
         {
             // map model to entity and set id
             var user = _mapper.Map<User>(model);

@@ -11,7 +11,7 @@ namespace WebApi.Data.Migrations.SqlServerMigrations
 {
     [DbContext(typeof(DataContext))]
     [Migration("20200127203602_added_last_fail_field")]
-    partial class added_last_fail_field
+    partial class AddedLastFailField
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

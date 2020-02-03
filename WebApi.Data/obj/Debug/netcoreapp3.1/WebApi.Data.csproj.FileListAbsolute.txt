@@ -5,7 +5,6 @@ C:\Users\Dellas\Desktop\DashboardAPIWorking\WebApi.Data\obj\Debug\netcoreapp3.1\
 C:\Users\Dellas\Desktop\DashboardAPIWorking\WebApi.Data\obj\Debug\netcoreapp3.1\WebApi.Data.AssemblyInfo.cs
 C:\Users\Dellas\Desktop\DashboardAPIWorking\WebApi.Data\obj\Debug\netcoreapp3.1\WebApi.Data.dll
 C:\Users\Dellas\Desktop\DashboardAPIWorking\WebApi.Data\obj\Debug\netcoreapp3.1\WebApi.Data.pdb
-C:\Users\Dellas\Desktop\DashboardAPIWorking\WebApi.Data\obj\Debug\netcoreapp3.1\WebApi.Data.csprojAssemblyReference.cache
 C:\Users\Dellas\Desktop\DashboardAPIWorking\WebApi.Data\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Mvc.Core.dll
 C:\Users\Dellas\Desktop\DashboardAPIWorking\WebApi.Data\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Routing.Abstractions.dll
 C:\Users\Dellas\Desktop\DashboardAPIWorking\WebApi.Data\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Http.Abstractions.dll
@@ -36,3 +35,4 @@ C:\Users\Dellas\Desktop\DashboardAPIWorking\WebApi.Data\bin\Debug\netcoreapp3.1\
 C:\Users\Dellas\Desktop\DashboardAPIWorking\WebApi.Data\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Hosting.Server.Abstractions.xml
 C:\Users\Dellas\Desktop\DashboardAPIWorking\WebApi.Data\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Hosting.Abstractions.xml
 C:\Users\Dellas\Desktop\DashboardAPIWorking\WebApi.Data\obj\Debug\netcoreapp3.1\WebApi.Data.csproj.CopyComplete
+C:\Users\Dellas\Desktop\DashboardAPIWorking\WebApi.Data\obj\Debug\netcoreapp3.1\WebApi.Data.csprojAssemblyReference.cache

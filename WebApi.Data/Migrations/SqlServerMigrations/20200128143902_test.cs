@@ -2,7 +2,7 @@
 
 namespace WebApi.Data.Migrations.SqlServerMigrations
 {
-    public partial class test : Migration
+    public partial class Test : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

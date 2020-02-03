@@ -2,7 +2,7 @@
 
 namespace WebApi.Data.Migrations.SqlServerMigrations
 {
-    public partial class active_column_added : Migration
+    public partial class ActiveColumnAdded : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

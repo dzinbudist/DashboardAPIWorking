@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WebApi.Data.Migrations.SqlServerMigrations
 {
-    public partial class date_deleted_to_date_modified : Migration
+    public partial class DateDeletedToDateModified : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WebApi.Data.Migrations.SqlServerMigrations
 {
-    public partial class added_tables : Migration
+    public partial class AddedTables : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
