@@ -9,3 +9,14 @@ C:\Users\Dellas\Desktop\DashboardAPIWorking\WebApi.Business\obj\Debug\netcoreapp
 C:\Users\Dellas\Desktop\DashboardAPIWorking\WebApi.Business\obj\Debug\netcoreapp3.1\WebApi.Business.csproj.CopyComplete
 C:\Users\Dellas\Desktop\DashboardAPIWorking\WebApi.Business\obj\Debug\netcoreapp3.1\WebApi.Business.dll
 C:\Users\Dellas\Desktop\DashboardAPIWorking\WebApi.Business\obj\Debug\netcoreapp3.1\WebApi.Business.pdb
+C:\Users\Developer\Documents\GitHub\Projektas\DashboardAPIWorking\DashboardAPIWorking\WebApi.Business\bin\Debug\netcoreapp3.1\WebApi.Business.deps.json
+C:\Users\Developer\Documents\GitHub\Projektas\DashboardAPIWorking\DashboardAPIWorking\WebApi.Business\bin\Debug\netcoreapp3.1\WebApi.Business.dll
+C:\Users\Developer\Documents\GitHub\Projektas\DashboardAPIWorking\DashboardAPIWorking\WebApi.Business\bin\Debug\netcoreapp3.1\WebApi.Business.pdb
+C:\Users\Developer\Documents\GitHub\Projektas\DashboardAPIWorking\DashboardAPIWorking\WebApi.Business\bin\Debug\netcoreapp3.1\WebApi.Data.dll
+C:\Users\Developer\Documents\GitHub\Projektas\DashboardAPIWorking\DashboardAPIWorking\WebApi.Business\bin\Debug\netcoreapp3.1\WebApi.Data.pdb
+C:\Users\Developer\Documents\GitHub\Projektas\DashboardAPIWorking\DashboardAPIWorking\WebApi.Business\obj\Debug\netcoreapp3.1\WebApi.Business.csprojAssemblyReference.cache
+C:\Users\Developer\Documents\GitHub\Projektas\DashboardAPIWorking\DashboardAPIWorking\WebApi.Business\obj\Debug\netcoreapp3.1\WebApi.Business.AssemblyInfoInputs.cache
+C:\Users\Developer\Documents\GitHub\Projektas\DashboardAPIWorking\DashboardAPIWorking\WebApi.Business\obj\Debug\netcoreapp3.1\WebApi.Business.AssemblyInfo.cs
+C:\Users\Developer\Documents\GitHub\Projektas\DashboardAPIWorking\DashboardAPIWorking\WebApi.Business\obj\Debug\netcoreapp3.1\WebApi.Business.csproj.CopyComplete
+C:\Users\Developer\Documents\GitHub\Projektas\DashboardAPIWorking\DashboardAPIWorking\WebApi.Business\obj\Debug\netcoreapp3.1\WebApi.Business.dll
+C:\Users\Developer\Documents\GitHub\Projektas\DashboardAPIWorking\DashboardAPIWorking\WebApi.Business\obj\Debug\netcoreapp3.1\WebApi.Business.pdb
