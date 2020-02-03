@@ -1,5 +1,6 @@
 using AutoMapper;
 using WebApi.Business.DTOs.Domains;
+using WebApi.Business.DTOs.Logs;
 using WebApi.Business.DTOs.Users;
 using WebApi.Data.Entities;
 
@@ -15,6 +16,7 @@ namespace WebApi.Helpers
             CreateMap<DomainModel, DomainModelDto>();
             CreateMap<DomainForCreationDto, DomainModel>();
             CreateMap<DomainForUpdateDto, DomainModel>();
+            CreateMap<LogModel, LogModelDto>();
         }
     }
 }

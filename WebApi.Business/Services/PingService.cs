@@ -31,23 +31,30 @@ namespace WebApi.Business.Services
             {
                 var reply = domainPing.Send(hostname);
                 if (reply != null && reply.Status == IPStatus.Success)
-                    return new
+                {
+                    var response = new
                     {
-                        Url_Pinged = domainModel.Url, Status = reply.Status.ToString(), LatencyMS = reply.RoundtripTime
+                        Url_Pinged = domainModel.Url,
+                        Status = reply.Status.ToString(),
+                        LatencyMS = reply.RoundtripTime
                     };
-                domainModel.Last_Fail = DateTime.Now;
-                // new LogModel entity added to Database
-                var logEntry = new LogModel
-                {
-                    Domain_Id = domainModel.Id, Log_Date = DateTime.Now, Error_Text = reply.Status.ToString()
-                };
-                _context.Logs.Add(logEntry);
-                _context.SaveChanges();
+                    domainModel.Last_Fail = DateTime.Now;
+                    // new LogModel entity added to Database
+                    var logEntry = new LogModel
+                    {
+                        Domain_Id = domainModel.Id,
+                        Log_Date = DateTime.Now,
+                        Error_Text = reply.Status.ToString()
+                    };
+                    _context.Logs.Add(logEntry);
+                    _context.SaveChanges();
 
-                return new
+                    return response;
+                }
+                else
                 {
-                    Url_Pinged = domainModel.Url, Status = reply.Status.ToString(), LatencyMS = reply.RoundtripTime
-                };
+                    return null;
+                }
             }
             catch
             {
