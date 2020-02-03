@@ -1,10 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Data.Entities
 {
-    [Bind("Service_Name,Url,Service_Type,Method,Basic_Auth,Auth_User,Auth_Password,Parameters,Notification_Email,Interval_Ms,Active,Deleted")]
+
     public class DomainModel
     {
 

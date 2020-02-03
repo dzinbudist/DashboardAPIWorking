@@ -11,7 +11,7 @@ namespace WebApi.Data.Migrations.SqlServerMigrations
 {
     [DbContext(typeof(DataContext))]
     [Migration("20200127183005_date_deleted_to_date_modified")]
-    partial class date_deleted_to_date_modified
+    partial class DateDeletedToDateModified
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

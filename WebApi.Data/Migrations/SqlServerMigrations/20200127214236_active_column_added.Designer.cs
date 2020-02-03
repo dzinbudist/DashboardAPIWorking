@@ -11,7 +11,7 @@ namespace WebApi.Data.Migrations.SqlServerMigrations
 {
     [DbContext(typeof(DataContext))]
     [Migration("20200127214236_active_column_added")]
-    partial class active_column_added
+    partial class ActiveColumnAdded
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

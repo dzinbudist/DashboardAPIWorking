@@ -11,7 +11,7 @@ namespace WebApi.Data.Migrations.SqlServerMigrations
 {
     [DbContext(typeof(DataContext))]
     [Migration("20200127212958_remove_error_code_column")]
-    partial class remove_error_code_column
+    partial class RemoveErrorCodeColumn
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

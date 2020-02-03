@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WebApi.Business.DTOs.Domains;
 using WebApi.Business.Services;
 using WebApi.Data.Entities;
 using WebApi.Helpers;
-using WebApi.Models;
 
 namespace WebApi.Controllers
 {
@@ -16,7 +17,7 @@ namespace WebApi.Controllers
     [ApiController]
     public class DomainController : ControllerBase
     {
-        private IDomainService _domainService;
+        private readonly IDomainService _domainService;
         public DomainController(IDomainService domainService)
         {
             _domainService = domainService;
@@ -26,66 +27,68 @@ namespace WebApi.Controllers
         [HttpGet]
         public IActionResult GetAllNotDeletedDomains()
         {
-            return Ok(_domainService.GetAllNotDeleted()); // ar veiks? paprastesnis variantas apacioj.
-
+            var result = _domainService.GetAllNotDeleted();
+            return Ok(result);
         }
-        //public IEnumerable<DomainModel> GetAllNotDeletedDomains()
-        //{
-        //    return _domainService.GetAllNotDeleted();
-
-        //}
 
         // GET: api/Domain/5
         [HttpGet("{id}")]
-        public ActionResult<DomainModel> GetDomainModel(int id)
+        public ActionResult<DomainModelDto> GetDomainModel(int id) //cia gal irgi geriau butu iactionresult?
         {
-            DomainModel model = _domainService.GetById(id);
-            if(model == null)
+            var result = _domainService.GetById(id);
+            if(result == null)
             {
                 return NotFound();
             }
-            return model;
+            return result;
         }
 
         [HttpPost]
-        public ActionResult<DomainModel> CreateDomainModel(DomainModel domainModel)
+        public IActionResult CreateDomainModel(DomainForCreationDto domain)
         {
             if (ModelState.IsValid) //validacija backendo. patikrina ar yra visi required fieldai modeli.
             {
-                DomainModel createdModel = _domainService.Create(domainModel);
-                if(createdModel == null)
-                {
-                    return BadRequest();
-                }
-                return Ok(createdModel);
+                _domainService.Create(domain);
+
+                return Ok(); //created at action reiktu.
             }
             else
             {
-                return BadRequest();
+                return BadRequest(ModelState);
             }
         }
 
         [HttpPut("{id}")]
-        public ActionResult<DomainModel> EditDomainModel(int id, DomainModel domainModel)
+        public IActionResult EditDomainModel(int id, DomainForUpdateDto domain)
         {
 
             if (ModelState.IsValid)
             {
-                return _domainService.Update(id, domainModel);
+                var result =_domainService.Update(id, domain);
+                if (result == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(result);
             }
-            return BadRequest();
+            else
+            {
+                return BadRequest(ModelState);
+            }
+            
         }
 
         // PUT for delete: api/Domain/5
         [HttpPut("del/{id}")]
-        public ActionResult<DomainModel> PseudoDeleteDomainModel(int id)
+        public IActionResult PseudoDeleteDomainModel(int id)
         {
-            DomainModel model = _domainService.PseudoDelete(id);
-            if (model == null)
+            var result = _domainService.PseudoDelete(id);
+            if (result == null)
             {
                 return NotFound();
             }
-            return model;
+            return Ok(result);
         }
     }
 }

@@ -11,7 +11,7 @@ namespace WebApi.Data.Migrations.SqlServerMigrations
 {
     [DbContext(typeof(DataContext))]
     [Migration("20200128143902_test")]
-    partial class test
+    partial class Test
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

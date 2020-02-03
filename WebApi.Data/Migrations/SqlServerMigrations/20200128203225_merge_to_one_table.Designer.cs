@@ -11,7 +11,7 @@ namespace WebApi.Data.Migrations.SqlServerMigrations
 {
     [DbContext(typeof(DataContext))]
     [Migration("20200128203225_merge_to_one_table")]
-    partial class merge_to_one_table
+    partial class MergeToOneTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using WebApi.Business.Models;
+using WebApi.Business.CustomExceptions;
 using WebApi.Data.Data;
 using WebApi.Data.Entities;
 
@@ -19,7 +19,7 @@ namespace WebApi.Business.Services
 
     public class UserService : IUserService
     {
-        private DataContext _context;
+        private readonly DataContext _context;
 
         public UserService(DataContext context)
         {

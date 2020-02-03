@@ -2,7 +2,7 @@
 
 namespace WebApi.Data.Migrations.SqlServerMigrations
 {
-    public partial class remove_error_code_column : Migration
+    public partial class RemoveErrorCodeColumn : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

@@ -11,7 +11,7 @@ namespace WebApi.Data.Migrations.SqlServerMigrations
 {
     [DbContext(typeof(DataContext))]
     [Migration("20200128204014_log_changed")]
-    partial class log_changed
+    partial class LogChanged
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

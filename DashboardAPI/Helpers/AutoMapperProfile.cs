@@ -1,6 +1,7 @@
 using AutoMapper;
+using WebApi.Business.DTOs.Domains;
+using WebApi.Business.DTOs.Users;
 using WebApi.Data.Entities;
-using WebApi.Models.Users;
 
 namespace WebApi.Helpers
 {
@@ -8,9 +9,12 @@ namespace WebApi.Helpers
     {
         public AutoMapperProfile()
         {
-            CreateMap<User, UserModel>();
-            CreateMap<RegisterModel, User>();
-            CreateMap<UpdateModel, User>();
+            CreateMap<User, UserModelDto>();
+            CreateMap<RegisterModelDto, User>();
+            CreateMap<UpdateModelDto, User>();
+            CreateMap<DomainModel, DomainModelDto>();
+            CreateMap<DomainForCreationDto, DomainModel>();
+            CreateMap<DomainForUpdateDto, DomainModel>();
         }
     }
 }

@@ -11,7 +11,7 @@ namespace WebApi.Data.Migrations.SqlServerMigrations
 {
     [DbContext(typeof(DataContext))]
     [Migration("20200129101841_required_parameters2")]
-    partial class required_parameters2
+    partial class RequiredParameters2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -45,9 +45,9 @@
       "frameworks": {
         "netcoreapp3.1": {
           "dependencies": {
-            "Microsoft.AspNetCore.Mvc.Core": {
+            "AutoMapper": {
               "target": "Package",
-              "version": "[2.2.5, )"
+              "version": "[9.0.0, )"
             }
           },
           "imports": [

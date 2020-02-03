@@ -2,7 +2,7 @@
 
 namespace WebApi.Data.Migrations.SqlServerMigrations
 {
-    public partial class required_parameters : Migration
+    public partial class RequiredParameters : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
