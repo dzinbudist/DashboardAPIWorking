@@ -48,56 +48,39 @@ namespace WebApi.Business.Services
                 return null;
             }
             var hostname = domainModel.Url;
-                    {
-                    var response = new
+            var domainPing = new Ping();
+            try
+            {
+                var reply = domainPing.Send(hostname);
+                if (reply != null && reply.Status == IPStatus.Success)
+                    return new
                     {
                         Url_Pinged = domainModel.Url,
                         Status = reply.Status.ToString(),
                         LatencyMS = reply.RoundtripTime
-                    domainModel.Last_Fail = DateTime.Now;
-                    // new LogModel entity added to Database
-                    var logEntry = new LogModel
-                    {
-                        Domain_Id = domainModel.Id,
-                        Log_Date = DateTime.Now,
-                        Error_Text = reply.Status.ToString()
                     };
-                    _context.Logs.Add(logEntry);
-                    _context.SaveChanges();
+                domainModel.Last_Fail = DateTime.Now;
+                // new LogModel entity added to Database
+                var logEntry = new LogModel
+                {
+                    Domain_Id = domainModel.Id,
+                    Log_Date = DateTime.Now,
+                    Error_Text = reply.Status.ToString()
+                };
+                _context.Logs.Add(logEntry);
+                _context.SaveChanges();
 
-                    return response;
-                }
-                else
-
-                    return null;
-                }
-            //var domainPing = new Ping();
-            //try
-            //{
-            //    var reply = domainPing.Send(hostname);
-            //    if (reply != null && reply.Status == IPStatus.Success)
-            //        return new
-            //        {
-            //            Url_Pinged = domainModel.Url, Status = reply.Status.ToString(), LatencyMS = reply.RoundtripTime
-            //        };
-            //    domainModel.Last_Fail = DateTime.Now;
-            //    // new LogModel entity added to Database
-            //    var logEntry = new LogModel
-            //    {
-            //        Domain_Id = domainModel.Id, Log_Date = DateTime.Now, Error_Text = reply.Status.ToString()
-            //    };
-            //    _context.Logs.Add(logEntry);
-            //    _context.SaveChanges();
-
-            //    return new
-            //    {
-            //        Url_Pinged = domainModel.Url, Status = reply.Status.ToString(), LatencyMS = reply.RoundtripTime
-            //    };
-            //}
-            //catch
-            //{
-            //    return null;
-            //}
+                return new
+                {
+                    Url_Pinged = domainModel.Url,
+                    Status = reply.Status.ToString(),
+                    LatencyMS = reply.RoundtripTime
+                };
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 
