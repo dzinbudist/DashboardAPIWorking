@@ -54,7 +54,7 @@ namespace WebApi.Business.Services
 
         public DomainModelDto GetById(int id)
         {
-            var domain = _context.Domains.Find(id);
+            var domain = _context.Domains.FirstOrDefault(x => x.Id == id && x.Deleted==false);
             var domainDto = _mapper.Map<DomainModelDto>(domain);
             return domainDto;
         }
