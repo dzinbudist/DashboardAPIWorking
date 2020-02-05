@@ -93,7 +93,7 @@ namespace WebApi
             services.AddScoped<IPingService, PingService>();
             services.AddScoped<IDomainService, DomainService>();
             services.AddScoped<ILogsService, LogsService>();
-
+            services.AddScoped<IRequestService, RequestsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
