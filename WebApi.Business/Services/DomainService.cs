@@ -5,6 +5,7 @@ using System.Linq;
 using WebApi.Business.DTOs.Domains;
 using WebApi.Data.Data;
 using WebApi.Data.Entities;
+using WebApi.Data.Enums;
 
 namespace WebApi.Business.Services
 {
@@ -47,9 +48,18 @@ namespace WebApi.Business.Services
 
         public IEnumerable<DomainModelDto> GetAllNotDeleted()
         {
-            var domains = _context.Domains.Where(x => x.Deleted == false).ToList();
-            var domainsDto = _mapper.Map<IEnumerable<DomainModelDto>>(domains);
-            return domainsDto;
+            try
+            {
+                var domains = _context.Domains.ToList();/*.Where(x => x.Deleted == false).ToList();*/
+                var domainsDto = _mapper.Map<IEnumerable<DomainModelDto>>(domains);
+                return domainsDto;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            
         }
 
         public DomainModelDto GetById(int id)

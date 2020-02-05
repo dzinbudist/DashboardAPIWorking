@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using WebApi.Data.Enums;
 
 namespace WebApi.Business.DTOs.Domains
 {
@@ -12,9 +13,8 @@ namespace WebApi.Business.DTOs.Domains
         [Required]
         //[Url] uzkomentuoju, nes neaisku, dar kokius linkus pinginsim
         public string Url { get; set; }
-        [Required]
-        public string Service_Type { get; set; } //cia gal enuma reiktu, jei viena is triju renkames
-        public string Method { get; set; } //cia jei webApp, kokia reiksme?
+        public ServiceType Service_Type { get; set; }
+        public RequestMethod Method { get; set; }
         public bool Basic_Auth { get; set; }
         public string Auth_User { get; set; }
         public string Auth_Password { get; set; } //pagalvoti kaip saugoti PW
