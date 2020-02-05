@@ -1,8 +1,0 @@
-C:\Users\Dellas\Desktop\DashboardAPIWorking\WebApi.Data\bin\Release\netcoreapp3.1\WebApi.Data.deps.json
-C:\Users\Dellas\Desktop\DashboardAPIWorking\WebApi.Data\bin\Release\netcoreapp3.1\WebApi.Data.dll
-C:\Users\Dellas\Desktop\DashboardAPIWorking\WebApi.Data\bin\Release\netcoreapp3.1\WebApi.Data.pdb
-C:\Users\Dellas\Desktop\DashboardAPIWorking\WebApi.Data\obj\Release\netcoreapp3.1\WebApi.Data.AssemblyInfoInputs.cache
-C:\Users\Dellas\Desktop\DashboardAPIWorking\WebApi.Data\obj\Release\netcoreapp3.1\WebApi.Data.AssemblyInfo.cs
-C:\Users\Dellas\Desktop\DashboardAPIWorking\WebApi.Data\obj\Release\netcoreapp3.1\WebApi.Data.dll
-C:\Users\Dellas\Desktop\DashboardAPIWorking\WebApi.Data\obj\Release\netcoreapp3.1\WebApi.Data.pdb
-C:\Users\Dellas\Desktop\DashboardAPIWorking\WebApi.Data\obj\Release\netcoreapp3.1\WebApi.Data.csprojAssemblyReference.cache
