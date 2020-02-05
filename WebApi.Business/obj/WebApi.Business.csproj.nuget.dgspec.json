@@ -1,24 +1,26 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Developer\\Documents\\GitHub\\Projektas\\DashboardAndrius\\DashboardAPIWorking\\WebApi.Business\\WebApi.Business.csproj": {}
+    "C:\\Users\\Dellas\\Desktop\\DashboardAPIWorking\\WebApi.Business\\WebApi.Business.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Developer\\Documents\\GitHub\\Projektas\\DashboardAndrius\\DashboardAPIWorking\\WebApi.Business\\WebApi.Business.csproj": {
+    "C:\\Users\\Dellas\\Desktop\\DashboardAPIWorking\\WebApi.Business\\WebApi.Business.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Developer\\Documents\\GitHub\\Projektas\\DashboardAndrius\\DashboardAPIWorking\\WebApi.Business\\WebApi.Business.csproj",
+        "projectUniqueName": "C:\\Users\\Dellas\\Desktop\\DashboardAPIWorking\\WebApi.Business\\WebApi.Business.csproj",
         "projectName": "WebApi.Business",
-        "projectPath": "C:\\Users\\Developer\\Documents\\GitHub\\Projektas\\DashboardAndrius\\DashboardAPIWorking\\WebApi.Business\\WebApi.Business.csproj",
-        "packagesPath": "C:\\Users\\Developer\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Developer\\Documents\\GitHub\\Projektas\\DashboardAndrius\\DashboardAPIWorking\\WebApi.Business\\obj\\",
+        "projectPath": "C:\\Users\\Dellas\\Desktop\\DashboardAPIWorking\\WebApi.Business\\WebApi.Business.csproj",
+        "packagesPath": "C:\\Users\\Dellas\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Dellas\\Desktop\\DashboardAPIWorking\\WebApi.Business\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
+          "C:\\Microsoft\\Xamarin\\NuGet\\",
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\Developer\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\Dellas\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"
@@ -30,8 +32,8 @@
         "frameworks": {
           "netcoreapp3.1": {
             "projectReferences": {
-              "C:\\Users\\Developer\\Documents\\GitHub\\Projektas\\DashboardAndrius\\DashboardAPIWorking\\WebApi.Data\\WebApi.Data.csproj": {
-                "projectPath": "C:\\Users\\Developer\\Documents\\GitHub\\Projektas\\DashboardAndrius\\DashboardAPIWorking\\WebApi.Data\\WebApi.Data.csproj"
+              "C:\\Users\\Dellas\\Desktop\\DashboardAPIWorking\\WebApi.Data\\WebApi.Data.csproj": {
+                "projectPath": "C:\\Users\\Dellas\\Desktop\\DashboardAPIWorking\\WebApi.Data\\WebApi.Data.csproj"
               }
             }
           }
@@ -73,21 +75,23 @@
         }
       }
     },
-    "C:\\Users\\Developer\\Documents\\GitHub\\Projektas\\DashboardAndrius\\DashboardAPIWorking\\WebApi.Data\\WebApi.Data.csproj": {
+    "C:\\Users\\Dellas\\Desktop\\DashboardAPIWorking\\WebApi.Data\\WebApi.Data.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Developer\\Documents\\GitHub\\Projektas\\DashboardAndrius\\DashboardAPIWorking\\WebApi.Data\\WebApi.Data.csproj",
+        "projectUniqueName": "C:\\Users\\Dellas\\Desktop\\DashboardAPIWorking\\WebApi.Data\\WebApi.Data.csproj",
         "projectName": "WebApi.Data",
-        "projectPath": "C:\\Users\\Developer\\Documents\\GitHub\\Projektas\\DashboardAndrius\\DashboardAPIWorking\\WebApi.Data\\WebApi.Data.csproj",
-        "packagesPath": "C:\\Users\\Developer\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Developer\\Documents\\GitHub\\Projektas\\DashboardAndrius\\DashboardAPIWorking\\WebApi.Data\\obj\\",
+        "projectPath": "C:\\Users\\Dellas\\Desktop\\DashboardAPIWorking\\WebApi.Data\\WebApi.Data.csproj",
+        "packagesPath": "C:\\Users\\Dellas\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Dellas\\Desktop\\DashboardAPIWorking\\WebApi.Data\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
+          "C:\\Microsoft\\Xamarin\\NuGet\\",
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\Developer\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\Dellas\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"
