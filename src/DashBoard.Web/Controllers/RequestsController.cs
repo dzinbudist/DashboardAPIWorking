@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using System.Threading.Tasks;
+using DashBoard.Business.Services;
 using Microsoft.AspNetCore.Mvc;
-using WebApi.Business.Services;
 
-namespace WebApi.Controllers
+namespace DashBoard.Web.Controllers
 {
     [Route("[controller]")]
     [ApiController]

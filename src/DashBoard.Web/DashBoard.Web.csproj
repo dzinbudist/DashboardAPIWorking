@@ -3,6 +3,12 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Controllers\RequestsController_BACKUP_1224.cs" />
+    <Compile Remove="Controllers\RequestsController_BASE_1224.cs" />
+    <Compile Remove="Controllers\RequestsController_LOCAL_1224.cs" />
+    <Compile Remove="Controllers\RequestsController_REMOTE_1224.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.0" />

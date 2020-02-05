@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Net.NetworkInformation;
-using System.Threading.Tasks;
-using WebApi.Data.Data;
-using WebApi.Data.Entities;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
+using DashBoard.Data.Data;
 
-namespace WebApi.Business.Services
+namespace DashBoard.Business.Services
 {
     public interface IRequestService
     {

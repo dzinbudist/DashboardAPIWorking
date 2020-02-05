@@ -5,6 +5,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\RequestsService_BACKUP_514.cs" />
+    <Compile Remove="Services\RequestsService_BASE_514.cs" />
+    <Compile Remove="Services\RequestsService_LOCAL_514.cs" />
+    <Compile Remove="Services\RequestsService_REMOTE_514.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Services\PingService.cs.orig" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
   </ItemGroup>
