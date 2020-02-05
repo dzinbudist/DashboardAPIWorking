@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using WebApi.Data.Enums;
 
 namespace WebApi.Data.Entities
 {
@@ -15,9 +16,8 @@ namespace WebApi.Data.Entities
         [Required]
         //[Url] uzkomentuoju, nes neaisku, dar kokius linkus pinginsim
         public string Url { get; set; }
-        [Required]
-        public string Service_Type { get; set; } //cia gal enuma reiktu, jei viena is triju renkames
-        public string Method { get; set; } //cia jei webApp, kokia reiksme?
+        public ServiceType Service_Type { get; set; } //EF in SQL enums saves as int.
+        public RequestMethod Method { get; set; }
         public bool Basic_Auth { get; set; }
         public string Auth_User { get; set; }
         public string Auth_Password { get; set; } //pagalvoti kaip saugoti PW
