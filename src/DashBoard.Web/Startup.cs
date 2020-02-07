@@ -32,7 +32,7 @@ namespace DashBoard.Web
 
 
             //Uzkomentinau sita koda, ir naudojam tik DataContext su SQLserver:
-            services.AddDbContext<DataContext>();
+            services.AddDbContext<DataContext>(options => options.UseSqlServer(_configuration["ConnectionStrings:WebApiDatabase"]));
             //****
             // use sql server db in production and sqlite db in development
             //if (_env.IsProduction())
@@ -92,6 +92,7 @@ namespace DashBoard.Web
             services.AddScoped<IDomainService, DomainService>();
             services.AddScoped<ILogsService, LogsService>();
             services.AddScoped<IRequestService, RequestsService>();
+            services.AddScoped<ITokenService, TokenService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,16 +1,16 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+//using Microsoft.EntityFrameworkCore;
+//using Microsoft.Extensions.Configuration;
 
-namespace DashBoard.Data.Data
-{
-    public class SqliteDataContext : DataContext
-    {
-        public SqliteDataContext(IConfiguration configuration) : base(configuration) { }
+//namespace DashBoard.Data.Data
+//{
+//    public class SqliteDataContext : DataContext
+//    {
+//        public SqliteDataContext(IConfiguration configuration) : base(configuration) { }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
-        {
-            // connect to sqlite database
-            options.UseSqlite(Configuration.GetConnectionString("WebApiDatabase"));
-        }
-    }
-}
+//        protected override void OnConfiguring(DbContextOptionsBuilder options)
+//        {
+//            // connect to sqlite database
+//            options.UseSqlite(Configuration.GetConnectionString("WebApiDatabase"));
+//        }
+//    }
+//}

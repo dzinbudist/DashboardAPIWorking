@@ -26,14 +26,14 @@ namespace DashBoard.Business.Services
         {
             var logs = _context.Logs.ToList();
             var logsDto = _mapper.Map<IEnumerable<LogModelDto>>(logs);
-            return !logsDto.Any() ? null : logsDto;
+            return logsDto.Any() ? logsDto : null;
         }
 
         public IEnumerable<LogModelDto> GetLogsByDomainId(int id)
         {
             var logs = _context.Logs.Where(x => x.Domain_Id == id).ToList();
             var logsDto = _mapper.Map<IEnumerable<LogModelDto>>(logs);
-            return !logsDto.Any() ? null : logsDto;
+            return logsDto.Any() ? logsDto : null;
         }
     }
 }

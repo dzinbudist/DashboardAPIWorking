@@ -22,16 +22,16 @@ namespace DashBoard.Web.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly IMapper _mapper;
+        private readonly ITokenService _tokenService;
         private readonly AppSettings _appSettings;
 
         public UsersController(
             IUserService userService,
-            IMapper mapper,
-            IOptions<AppSettings> appSettings)
+            IOptions<AppSettings> appSettings,
+            ITokenService tokenService)
         {
+            _tokenService = tokenService;
             _userService = userService;
-            _mapper = mapper;
             _appSettings = appSettings.Value;
         }
 
@@ -43,21 +43,7 @@ namespace DashBoard.Web.Controllers
 
             if (user == null)
                 return BadRequest(new { message = "Username or password is incorrect" });
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, user.Id.ToString()),
-                    new Claim(ClaimTypes.Role, user.Role)
-                }),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            var tokenString = tokenHandler.WriteToken(token);
+            var token = _tokenService.GenerateToken(user, _appSettings.Secret);
 
             // return basic user info and authentication token
             return Ok(new
@@ -67,7 +53,7 @@ namespace DashBoard.Web.Controllers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Role = user.Role,
-                Token = tokenString
+                Token = token
             });
         }
 
@@ -75,13 +61,10 @@ namespace DashBoard.Web.Controllers
         [HttpPost("register")]
         public IActionResult Register([FromBody]RegisterModelDto model)
         {
-            // map model to entity
-            var user = _mapper.Map<User>(model);
-
             try
             {
                 // create user
-                _userService.Create(user, model.Password);
+                _userService.Create(model, model.Password);
                 return Ok();
             }
             catch (AppException ex)
@@ -94,31 +77,26 @@ namespace DashBoard.Web.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var users = _userService.GetAll();
-            var model = _mapper.Map<IList<UserModelDto>>(users);
-            return Ok(model);
+            var usersDto = _userService.GetAll();
+            return Ok(usersDto);
         }
 
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            var user = _userService.GetById(id);
-            var model = _mapper.Map<UserModelDto>(user);
-            return Ok(model);
+            var userDto = _userService.GetById(id);
+            
+            return Ok(userDto);
         }
 
-        //uthorize(Roles = Role.Admin)]
+        //Authorize(Roles = Role.Admin)]
         [HttpPut("{id}")]
         public IActionResult Update(int id, [FromBody]UpdateModelDto model)
         {
-            // map model to entity and set id
-            var user = _mapper.Map<User>(model);
-            user.Id = id;
-
             try
             {
                 // update user 
-                _userService.Update(user, model.Password);
+                _userService.Update(id, model);
                 return Ok();
             }
             catch (AppException ex)

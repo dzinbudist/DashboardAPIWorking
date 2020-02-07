@@ -96,7 +96,7 @@ namespace DashBoard.Business.Services
 
         public object Update(int id, DomainForUpdateDto domain)
         {
-            var updatedModel = _context.Domains.Find(id);
+            var updatedModel = _context.Domains.FirstOrDefault(x => x.Id == id && x.Deleted==false);
             if (updatedModel == null)
             {
                 return null;

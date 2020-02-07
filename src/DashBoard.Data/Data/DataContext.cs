@@ -6,17 +6,20 @@ namespace DashBoard.Data.Data
 {
     public class DataContext : DbContext
     {
-        protected readonly IConfiguration Configuration;
+        //protected readonly IConfiguration Configuration;
 
-        public DataContext(IConfiguration configuration)
+        public DataContext(/*IConfiguration configuration*/)
         {
-            Configuration = configuration;
+            //Configuration = configuration;
         }
-
+        public DataContext(DbContextOptions<DataContext> options) : base(options)
+        {
+            //this constructor is needed for more simple UNIT testing.
+        }
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
             // connect to sql server database
-            options.UseSqlServer(Configuration.GetConnectionString("WebApiDatabase"));
+            //options.UseSqlServer(Configuration.GetConnectionString("WebApiDatabase"));
         }
 
         public DbSet<User> Users { get; set; }
