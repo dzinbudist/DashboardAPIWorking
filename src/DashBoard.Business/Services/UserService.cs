@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
 using DashBoard.Business.CustomExceptions;
+using DashBoard.Business.DTOs.Users;
 using DashBoard.Data.Data;
 using DashBoard.Data.Entities;
 
@@ -10,19 +12,20 @@ namespace DashBoard.Business.Services
     public interface IUserService
     {
         User Authenticate(string username, string password);
-        IEnumerable<User> GetAll();
-        User GetById(int id);
-        User Create(User user, string password);
-        void Update(User user, string password = null);
+        IEnumerable<UserModelDto> GetAll();
+        UserModelDto GetById(int id);
+        User Create(RegisterModelDto model, string password);
+        void Update(int id, UpdateModelDto model);
         void Delete(int id);
     }
 
     public class UserService : IUserService
     {
         private readonly DataContext _context;
-
-        public UserService(DataContext context)
+        private readonly IMapper _mapper;
+        public UserService(DataContext context, IMapper mapper)
         {
+            _mapper = mapper;
             _context = context;
         }
 
@@ -45,18 +48,23 @@ namespace DashBoard.Business.Services
             return user;
         }
 
-        public IEnumerable<User> GetAll()
+        public IEnumerable<UserModelDto> GetAll()
         {
-            return _context.Users;
+            var users = _context.Users;
+            var usersDto = _mapper.Map<IList<UserModelDto>>(users);
+            return usersDto;
         }
 
-        public User GetById(int id)
+        public UserModelDto GetById(int id)
         {
-            return _context.Users.Find(id);
+            var user = _context.Users.Find(id);
+            var userDto = _mapper.Map<UserModelDto>(user);
+            return userDto;
         }
-
-        public User Create(User user, string password)
+        public User Create(RegisterModelDto model, string password)
         {
+            var user = _mapper.Map<User>(model); //map model to entity
+
             // validation
             if (string.IsNullOrWhiteSpace(password))
                 throw new AppException("Password is required");
@@ -69,40 +77,43 @@ namespace DashBoard.Business.Services
 
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
-            user.Role = Role.Admin;
+            user.Role = Role.Admin; // Role.
 
             _context.Users.Add(user);
             _context.SaveChanges();
 
-            return user;
+            return user; // method returns entity model, but it's not used in controller. So no need for DTO here.
         }
-
-        public void Update(User userParam, string password = null)
+        public void Update(int id, UpdateModelDto model)
         {
-            var user = _context.Users.Find(userParam.Id);
+            // map model to entity
+            var password = model.Password; //get user sent password, before mapping.
+            var modelWithNewParams = _mapper.Map<User>(model);
+            //find excising user
+            var user = _context.Users.Find(id);
 
             if (user == null)
                 throw new AppException("User not found");
 
             // update username if it has changed
-            if (!string.IsNullOrWhiteSpace(userParam.Username) && userParam.Username != user.Username)
+            if (!string.IsNullOrWhiteSpace(modelWithNewParams.Username) && modelWithNewParams.Username != user.Username)
             {
                 // throw error if the new username is already taken
-                if (_context.Users.Any(x => x.Username == userParam.Username))
-                    throw new AppException("Username " + userParam.Username + " is already taken");
+                if (_context.Users.Any(x => x.Username == modelWithNewParams.Username))
+                    throw new AppException("Username " + modelWithNewParams.Username + " is already taken");
 
-                user.Username = userParam.Username;
+                user.Username = modelWithNewParams.Username;
             }
 
             // update user properties if provided
-            if (!string.IsNullOrWhiteSpace(userParam.FirstName))
-                user.FirstName = userParam.FirstName;
+            if (!string.IsNullOrWhiteSpace(modelWithNewParams.FirstName))
+                user.FirstName = modelWithNewParams.FirstName;
 
-            if (!string.IsNullOrWhiteSpace(userParam.LastName))
-                user.LastName = userParam.LastName;
+            if (!string.IsNullOrWhiteSpace(modelWithNewParams.LastName))
+                user.LastName = modelWithNewParams.LastName;
 
             //if (!string.IsNullOrWhiteSpace(userParam.Role))
-                //user.Role = userParam.Role;
+            //user.Role = userParam.Role;
             user.Role = Role.Admin;
 
             // update password if provided
