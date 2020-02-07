@@ -101,7 +101,24 @@ namespace DashBoard.Business.Services
                     new AuthenticationHeaderValue(
                         "Basic", Convert.ToBase64String(
                             System.Text.ASCIIEncoding.ASCII.GetBytes(
-                               $"{domainModel.Auth_User}:{domainModel.Auth_Password + random.Next(10000)}")));            }
+                               $"{domainModel.Auth_User}:{domainModel.Auth_Password + random.Next(10000)}")));
+
+                var sw = new Stopwatch();
+                sw.Start();
+                var response = await client.SendAsync(request);
+                sw.Stop();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return new
+                    {
+                        DomainUrl = domainModel.Url,
+                        Status = response.StatusCode,
+                        RequestTime = sw.ElapsedMilliseconds
+                    };
+                }
+
+            }
             else
             {
 
@@ -109,29 +126,16 @@ namespace DashBoard.Business.Services
             }         
 
 
-            var aJSON = new
-            {
-                username = "test",
-                password = "1234"
-            };
+            //var aJSON = new
+            //{
+            //    username = "test",
+            //    password = "1234"
+            //};
 
-            string jsonString = JsonSerializer.Serialize(aJSON);            
-            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+            //string jsonString = JsonSerializer.Serialize(aJSON);            
+            //request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
-            var sw = new Stopwatch();
-            sw.Start();
-            var response = await client.SendAsync(request);
-            sw.Stop();
 
-            if (response.IsSuccessStatusCode)
-            {
-                return new
-                {
-                    DomainUrl = domainModel.Url,
-                    Status = response.StatusCode,
-                    RequestTime = sw.ElapsedMilliseconds
-                };
-            }
 
             return null;
         }
