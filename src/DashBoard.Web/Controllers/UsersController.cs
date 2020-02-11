@@ -82,7 +82,7 @@ namespace DashBoard.Web.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public IActionResult GetById(int id) //this might be missing not found actionResult.
         {
             var userDto = _userService.GetById(id);
             
@@ -106,7 +106,7 @@ namespace DashBoard.Web.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}")] //this might be missing not found actionResult.
         public IActionResult Delete(int id)
         {
             _userService.Delete(id);

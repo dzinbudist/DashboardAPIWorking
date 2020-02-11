@@ -104,18 +104,7 @@ namespace Services.Tests
             {
                 var service = new DomainService(context, mapper);
                 var result = service.Create(testModel);
-                //PropertyInfo[] resultProperties = typeof(DomainModelDto).GetProperties(); //reflection to get all properties
-
-                //I failed to check for all the properties, but it's probably over-kill anyway.
-                //foreach (var property in resultProperties)
-                //{
-                //    if (property.Name != "Service_Name" && property.Name != "Url" && property.Name != "Notification_Email")
-                //    {
-                //        Assert.Equal(default, property.GetValue(, null));
-                //    }
-                //}
-                ////Assert
-                Assert.Equal(default, result.Parameters); //check for some un-set property if it becomes default after service
+                Assert.Equal(default, result.Parameters); //check for some un-set property if it becomes default after Create service
                 Assert.False(result.Deleted);
                 Assert.IsType<DomainModelDto>(result);
                 Assert.Equal(1, context.Domains.Count());
