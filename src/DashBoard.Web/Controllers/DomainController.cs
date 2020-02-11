@@ -51,24 +51,19 @@ namespace DashBoard.Web.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult EditDomainModel(int id, DomainForUpdateDto domain) //client has to send full DomaintForUPdateDto model.
+        public IActionResult EditDomainModel(int id, DomainForUpdateDto domain) //client has to send full DomaintForUPdateDto model. Other option is to use Patch HTTP method instead of PUT
         {
-
-            if (ModelState.IsValid)
-            {
-                var result =_domainService.Update(id, domain);
-                if (result == null)
-                {
-                    return NotFound();
-                }
-
-                return Ok();
-            }
-            else
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            
+            var result = _domainService.Update(id, domain);
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            return Ok();
         }
 
         // PUT for delete: api/Domain/5
