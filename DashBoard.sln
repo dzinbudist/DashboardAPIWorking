@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.Tests", "tests\Das
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DashBoard.Web", "DashBoard.Web", "{23D251C2-F6C4-4A99-B0A3-9F51C66F537C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Controllers.Tests", "Controllers.Tests\Controllers.Tests.csproj", "{8C44E927-77E1-46CE-9583-3394F954CEF9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Controllers.Tests", "tests\DashBoard.Web\Controllers.Tests\Controllers.Tests.csproj", "{8C44E927-77E1-46CE-9583-3394F954CEF9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
