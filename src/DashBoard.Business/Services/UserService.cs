@@ -78,6 +78,9 @@ namespace DashBoard.Business.Services
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
             user.Role = Role.Admin; // Role.
+            user.Active = true;
+            user.Date_Modified = DateTime.Now;
+            user.Date_Created = DateTime.Now;
 
             _context.Users.Add(user);
             _context.SaveChanges();
@@ -114,7 +117,10 @@ namespace DashBoard.Business.Services
 
             //if (!string.IsNullOrWhiteSpace(userParam.Role))
             //user.Role = userParam.Role;
-            user.Role = Role.Admin;
+            //user.Role = model.Role;
+            //user.Active = model.Active;
+            user.Date_Modified = DateTime.Now;
+            //user.Modified_By = MiscFunctions.GetCurentUser(this.User);
 
             // update password if provided
             if (!string.IsNullOrWhiteSpace(password))

@@ -30,22 +30,32 @@ namespace DashBoard.Business.Services
 
             if (domainModel != null)
             {
-                HttpClient client = new HttpClient();
-                client.BaseAddress = new Uri(domainModel.Url);
-                client.DefaultRequestHeaders.Accept.Clear();
-
-                var sw = new Stopwatch();
-                sw.Start();
-                HttpResponseMessage response = await client.GetAsync("");
-                sw.Stop();
-                if (response.IsSuccessStatusCode)
+                try
                 {
-                    return new
+                    if (domainModel.Service_Type == ServiceType.WebApp)
+                    { 
+                        HttpClient client = new HttpClient();
+                        client.BaseAddress = new Uri(domainModel.Url);
+                        client.DefaultRequestHeaders.Accept.Clear();
+
+                        //do request and count response time
+                        var sw = new Stopwatch();
+                        sw.Start();
+                        HttpResponseMessage response = await client.GetAsync("");
+                        sw.Stop();
+
+                        SaveLog(domainModel, response);
+
+                        return GetResponseObject(domainModel, sw, response);
+                    }
+                    else
                     {
-                        DomainUrl = domainModel.Url,
-                        Status = response.StatusCode,
-                        RequestTime = sw.ElapsedMilliseconds
-                    };
+                        return null;
+                    }
+                }
+                catch
+                {
+                    return GetFailObject(domainModel);
                 }
             }
             return null;
@@ -57,88 +67,110 @@ namespace DashBoard.Business.Services
 
             if (domainModel != null)            
             {
-               
-                if (domainModel.Service_Type == ServiceType.ServiceRest)
+                HttpClient client = new HttpClient();
+                client.BaseAddress = new Uri(domainModel.Url);
+                client.DefaultRequestHeaders.Accept.Clear();
+
+                if (domainModel.Service_Type == ServiceType.ServiceRest || domainModel.Service_Type == ServiceType.WebApp)
                 {
-                    HttpClient client = new HttpClient();
-                    client.BaseAddress = new Uri(domainModel.Url);
-                    client.DefaultRequestHeaders.Accept.Clear();
+
                     if (domainModel.Method == RequestMethod.Get)
                     {
                         HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "");
-                        return await DoRestRequest(client, request, domainModel);
+                        return await DoRequest(client, request, domainModel, "application/json");
                     }
                     else if (domainModel.Method == RequestMethod.Post)
                     {
                         HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "");
-                        return await DoRestRequest(client, request, domainModel);
+                        return await DoRequest(client, request, domainModel, "application/json");
                     }                    
                 } 
                 else if (domainModel.Service_Type == ServiceType.ServiceSoap)
                 {
-
+                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "");
+                    return await DoRequest(client, request, domainModel, "text/xml");
                 }
 
-
-                //await client.SendAsync(request)
-                //      .ContinueWith(responseTask =>
-                //      {
-                //          Console.WriteLine("Response: {0}", responseTask.Result);
-                //      });
             }
             return null;
         }
 
-        async Task<object> DoRestRequest(HttpClient client, HttpRequestMessage request, DomainModel domainModel)
+        async Task<object> DoRequest(HttpClient client, HttpRequestMessage request, DomainModel domainModel, string mediaType)
         {
-            if (domainModel.Basic_Auth)
+            try
             {
-                //http://www.httpwatch.com/httpgallery/authentication/authenticatedimage/default.aspx?0.8738778301275651
-                //httpwatch
+                if (domainModel.Basic_Auth)
+                {
+                    Random random = new Random(); // laikinas
+                    client.DefaultRequestHeaders.Authorization =
+                        new AuthenticationHeaderValue(
+                            "Basic", Convert.ToBase64String(
+                                System.Text.ASCIIEncoding.ASCII.GetBytes(
+                                   $"{domainModel.Auth_User}:{domainModel.Auth_Password}"))); //+random.Next(10000)
 
-                Random random = new Random();
-                client.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue(
-                        "Basic", Convert.ToBase64String(
-                            System.Text.ASCIIEncoding.ASCII.GetBytes(
-                               $"{domainModel.Auth_User}:{domainModel.Auth_Password + random.Next(10000)}")));
+                    if (domainModel.Parameters != null && request.Method != HttpMethod.Get)
+                    {
+                        var Json = domainModel.Parameters;
+                        request.Content = new StringContent(Json, Encoding.UTF8, mediaType);
+                    }
+                }
+                else
+                {
+                    if (domainModel.Parameters != null && request.Method != HttpMethod.Get)
+                    {
+                        var Json = domainModel.Parameters;
+                        request.Content = new StringContent(Json, Encoding.UTF8, mediaType);
+                    }
+                }
 
                 var sw = new Stopwatch();
                 sw.Start();
                 var response = await client.SendAsync(request);
                 sw.Stop();
 
-                if (response.IsSuccessStatusCode)
-                {
-                    return new
-                    {
-                        DomainUrl = domainModel.Url,
-                        Status = response.StatusCode,
-                        RequestTime = sw.ElapsedMilliseconds
-                    };
-                }
-
+                SaveLog(domainModel, response);
+                return GetResponseObject(domainModel, sw, response);
             }
-            else
+            catch
             {
-
-
-            }         
-
-
-            //var aJSON = new
-            //{
-            //    username = "test",
-            //    password = "1234"
-            //};
-
-            //string jsonString = JsonSerializer.Serialize(aJSON);            
-            //request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
-
-
-
-            return null;
+                return GetFailObject(domainModel);
+            }
         }
 
+        private static object GetFailObject(DomainModel domainModel)
+        {
+            return new
+            {
+                DomainUrl = domainModel.Url,
+                Status = "Failed" // add reason
+            };
+        }
+
+        private static object GetResponseObject(DomainModel domainModel, Stopwatch sw, HttpResponseMessage response)
+        {
+            return new
+            {
+                DomainUrl = domainModel.Url,
+                Status = response.StatusCode,
+                RequestTime = sw.ElapsedMilliseconds
+            };
+        }
+
+        private void SaveLog(DomainModel domainModel, HttpResponseMessage response)
+        {
+            if (!response.IsSuccessStatusCode)
+            {
+                domainModel.Last_Fail = DateTime.Now;
+                // new LogModel entity added to Database
+                var logEntry = new LogModel
+                {
+                    Domain_Id = domainModel.Id,
+                    Log_Date = DateTime.Now,
+                    Error_Text = response.StatusCode.ToString()
+                };
+                _context.Logs.Add(logEntry);
+                _context.SaveChanges();
+            }
+        }
     }
 }
