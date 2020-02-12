@@ -15,5 +15,8 @@ namespace DashBoard.Business.DTOs.Users
 
         [Required]
         public string Password { get; set; }
+        [Required]
+        [EmailAddress]
+        public string UserEmail { get; set; }
     }
 }
