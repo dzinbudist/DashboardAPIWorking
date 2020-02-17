@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace WebApi.Data.Migrations.SqlServerMigrations
+namespace DashBoard.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20200204210610_enums")]
-    partial class enums
+    [Migration("20200215230947_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,7 +21,7 @@ namespace WebApi.Data.Migrations.SqlServerMigrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("WebApi.Data.Entities.DomainModel", b =>
+            modelBuilder.Entity("DashBoard.Data.Entities.DomainModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -87,7 +87,7 @@ namespace WebApi.Data.Migrations.SqlServerMigrations
                     b.ToTable("Domains");
                 });
 
-            modelBuilder.Entity("WebApi.Data.Entities.LogModel", b =>
+            modelBuilder.Entity("DashBoard.Data.Entities.LogModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -108,18 +108,33 @@ namespace WebApi.Data.Migrations.SqlServerMigrations
                     b.ToTable("Logs");
                 });
 
-            modelBuilder.Entity("WebApi.Data.Entities.User", b =>
+            modelBuilder.Entity("DashBoard.Data.Entities.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Created_By")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Date_Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Date_Modified")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Modified_By")
+                        .HasColumnType("int");
 
                     b.Property<byte[]>("PasswordHash")
                         .HasColumnType("varbinary(max)");
@@ -128,6 +143,9 @@ namespace WebApi.Data.Migrations.SqlServerMigrations
                         .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Role")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserEmail")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Username")

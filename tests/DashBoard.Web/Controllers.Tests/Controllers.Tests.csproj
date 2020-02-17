@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="9.0.0" />
-    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.7" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <PackageReference Include="Moq" Version="4.13.1" />
     <PackageReference Include="xunit" Version="2.4.0" />
@@ -17,9 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\DashBoard.Business\DashBoard.Business.csproj" />
-    <ProjectReference Include="..\src\DashBoard.Data\DashBoard.Data.csproj" />
-    <ProjectReference Include="..\src\DashBoard.Web\DashBoard.Web.csproj" />
+    <ProjectReference Include="..\..\..\src\DashBoard.Web\DashBoard.Web.csproj" />
   </ItemGroup>
 
 </Project>
