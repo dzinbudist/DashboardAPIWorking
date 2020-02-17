@@ -18,5 +18,6 @@ namespace DashBoard.Business.DTOs.Users
         [Required]
         [EmailAddress]
         public string UserEmail { get; set; }
+        public bool CreatedByAdmin { get; set; }
     }
 }

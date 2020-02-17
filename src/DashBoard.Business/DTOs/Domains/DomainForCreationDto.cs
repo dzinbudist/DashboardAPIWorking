@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using DashBoard.Data.Enums;
 
 namespace DashBoard.Business.DTOs.Domains
@@ -10,7 +11,7 @@ namespace DashBoard.Business.DTOs.Domains
         [Required]
         //[Url] uzkomentuoju, nes neaisku, dar kokius linkus pinginsim
         public string Url { get; set; }
-        [Range(0, 2)]
+        [Range(0, 1)]
         public ServiceType Service_Type { get; set; }
         [Range(0, 1)]
         public RequestMethod Method { get; set; }
@@ -23,6 +24,8 @@ namespace DashBoard.Business.DTOs.Domains
         public string Notification_Email { get; set; }
         [Range(3000, int.MaxValue, ErrorMessage = "Interval ms value must be more than 3000")]
         public int Interval_Ms { get; set; } = 600000; //default, jei nieko neiveda is front-end
+        public int Latency_Threshold_Ms { get; set; } = 60000;
         public bool Active { get; set; } = true; //Default reiksme
+        public Guid Team_Key { get; set; }
     }
 }

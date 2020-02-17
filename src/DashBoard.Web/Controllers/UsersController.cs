@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using AutoMapper;
+﻿using DashBoard.Business;
 using DashBoard.Business.CustomExceptions;
 using DashBoard.Business.DTOs.Users;
 using DashBoard.Business.Services;
-using DashBoard.Data.Entities;
 using DashBoard.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 
 namespace DashBoard.Web.Controllers
 {
@@ -24,6 +17,7 @@ namespace DashBoard.Web.Controllers
         private readonly IUserService _userService;
         private readonly ITokenService _tokenService;
         private readonly AppSettings _appSettings;
+        public string LoggedInUser => User.Identity.Name; //this gets current user ID
 
         public UsersController(
             IUserService userService,
@@ -63,8 +57,28 @@ namespace DashBoard.Web.Controllers
         {
             try
             {
+                var userId = LoggedInUser; //this will be null, since method is Anonymous.
+                model.CreatedByAdmin = false;
                 // create user
-                _userService.Create(model, model.Password);
+                _userService.Create(model, model.Password, userId);
+                return Ok();
+            }
+            catch (AppException ex)
+            {
+                // return error message if there was an exception
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+        [Authorize(Roles = Role.Admin)]
+        [HttpPost("admin/register")]
+        public IActionResult RegisterByAdmin([FromBody]RegisterModelDto model)
+        {
+            try
+            {
+                var userId = LoggedInUser;
+                model.CreatedByAdmin = true;
+                // create user
+                _userService.Create(model, model.Password, userId);
                 return Ok();
             }
             catch (AppException ex)
@@ -89,14 +103,31 @@ namespace DashBoard.Web.Controllers
             return Ok(userDto);
         }
 
-        //Authorize(Roles = Role.Admin)]
         [HttpPut("{id}")]
         public IActionResult Update(int id, [FromBody]UpdateModelDto model)
         {
             try
             {
+                var userId = LoggedInUser;
                 // update user 
-                _userService.Update(id, model);
+                _userService.Update(id, model, userId);
+                return Ok();
+            }
+            catch (AppException ex)
+            {
+                // return error message if there was an exception
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+        [Authorize(Roles = Role.Admin)]
+        [HttpPut("admin/{id}")]
+        public IActionResult UpdateByAdmin(int id, [FromBody]UpdateModelDto model)
+        {
+            try
+            {
+                var userId = LoggedInUser;
+                // update user 
+                _userService.Update(id, model, userId);
                 return Ok();
             }
             catch (AppException ex)

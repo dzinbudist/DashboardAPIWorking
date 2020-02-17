@@ -14,24 +14,13 @@ namespace DashBoard.Web.Controllers
             _requestService = requestService;
         }
 
-        [HttpGet("getportal/{id}")]
-        public async Task<ActionResult<object>> GetPortal(int id)
-        {
-            var response = await _requestService.GetDomainByUrl(id);
-            if (response == null)
-            {
-                return NotFound(new { message = $"Problem reaching portal with id {id}" });
-            }
-            return response;
-        }
-
         [HttpGet("getservice/{id}")]
         public async Task<ActionResult<object>> GetService(int id)
         {
             var response = await _requestService.GetService(id);
             if (response == null)
             {
-                return NotFound(new { message = $"Problem reaching portal with id {id}" });
+                return NotFound(new { message = $"Problem reaching service with id {id}" });
             }
             return response;
         }

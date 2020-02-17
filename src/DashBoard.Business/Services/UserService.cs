@@ -14,8 +14,8 @@ namespace DashBoard.Business.Services
         User Authenticate(string username, string password);
         IEnumerable<UserModelDto> GetAll();
         UserModelDto GetById(int id);
-        User Create(RegisterModelDto model, string password);
-        void Update(int id, UpdateModelDto model);
+        User Create(RegisterModelDto model, string password, string userId);
+        void Update(int id, UpdateModelDto model, string userId);
         void Delete(int id);
     }
 
@@ -61,9 +61,9 @@ namespace DashBoard.Business.Services
             var userDto = _mapper.Map<UserModelDto>(user);
             return userDto;
         }
-        public User Create(RegisterModelDto model, string password)
+        public User Create(RegisterModelDto model, string password, string userId)
         {
-            var user = _mapper.Map<User>(model); //map model to entity
+            var user = _mapper.Map<User>(model); //map model to entity. Ar created by admin nusifiltruos cia ?
 
             // validation
             if (string.IsNullOrWhiteSpace(password))
@@ -75,19 +75,26 @@ namespace DashBoard.Business.Services
             byte[] passwordHash, passwordSalt;
             CreatePasswordHash(password, out passwordHash, out passwordSalt);
 
+            if (model.CreatedByAdmin)
+            {
+                var admin = _context.Users.First(c => c.Id == Convert.ToInt32(userId));
+                user.Created_By = admin.Id;
+                user.Modified_By = admin.Id;
+                user.Role = Role.User;
+                user.Team_Key = admin.Team_Key;
+            }
+            user.Role = Role.Admin; // Role.
+            user.Team_Key = Guid.NewGuid();
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
-            user.Role = Role.Admin; // Role.
-            user.Active = true;
             user.Date_Modified = DateTime.Now;
             user.Date_Created = DateTime.Now;
-
             _context.Users.Add(user);
             _context.SaveChanges();
 
             return user; // method returns entity model, but it's not used in controller. So no need for DTO here.
         }
-        public void Update(int id, UpdateModelDto model)
+        public void Update(int id, UpdateModelDto model, string userId)
         {
             // map model to entity
             var password = model.Password; //get user sent password, before mapping.
@@ -115,12 +122,15 @@ namespace DashBoard.Business.Services
             if (!string.IsNullOrWhiteSpace(modelWithNewParams.LastName))
                 user.LastName = modelWithNewParams.LastName;
 
-            //if (!string.IsNullOrWhiteSpace(userParam.Role))
-            //user.Role = userParam.Role;
-            //user.Role = model.Role;
-            //user.Active = model.Active;
             user.Date_Modified = DateTime.Now;
-            //user.Modified_By = MiscFunctions.GetCurentUser(this.User);
+            if (model.UpdatedByAdmin)
+            {
+                var admin = _context.Users.First(c => c.Id == Convert.ToInt32(userId)); //pakeist
+                user.Modified_By = admin.Id;
+            }
+            user.Modified_By = Convert.ToInt32(userId);
+
+            //this is missing email update !!
 
             // update password if provided
             if (!string.IsNullOrWhiteSpace(password))

@@ -10,6 +10,7 @@ namespace DashBoard.Web.Controllers
     public class DomainController : ControllerBase
     {
         private readonly IDomainService _domainService;
+        public string LoggedInUser => User.Identity.Name; //this gets current user ID
         public DomainController(IDomainService domainService)
         {
             _domainService = domainService;
@@ -45,7 +46,8 @@ namespace DashBoard.Web.Controllers
         public IActionResult CreateDomainModel(DomainForCreationDto domain)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-            var result = _domainService.Create(domain);
+            var userId = LoggedInUser;
+            var result = _domainService.Create(domain, userId);
             return CreatedAtAction("GetDomainModel", new {id = result.Id}, result);
 
         }

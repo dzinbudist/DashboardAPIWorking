@@ -16,7 +16,7 @@ namespace DashBoard.Data.Entities
         [Required]
         //[Url] uzkomentuoju, nes neaisku, dar kokius linkus pinginsim
         public string Url { get; set; }
-        [Range(0, 2)]
+        [Range(0, 1)]
         public ServiceType Service_Type { get; set; } //EF in SQL enums saves as int.
         [Range(0, 1)]
         public RequestMethod Method { get; set; }
@@ -30,8 +30,10 @@ namespace DashBoard.Data.Entities
 
         [Range(3000, int.MaxValue, ErrorMessage = "Interval ms value must be more than 3000")]
         public int Interval_Ms { get; set; } = 600000; //default, jei nieko neiveda is front-end
+        public int Latency_Threshold_Ms { get; set; } = 60000;
         public bool Active { get; set; } = true; //Default reiksme
         public bool Deleted { get; set; }
+        public Guid Team_Key { get; set; }
         public int Created_By { get; set; } //Useris negali keisti
         public int Modified_By { get; set; } //Useris negali keisti
         public DateTime Date_Created { get; set; } = DateTime.Now; //Useris negali keisti

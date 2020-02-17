@@ -1,3 +1,5 @@
+using System;
+
 namespace DashBoard.Business.DTOs.Users
 {
   public class UserModelDto
@@ -7,6 +9,6 @@ namespace DashBoard.Business.DTOs.Users
         public string LastName { get; set; }
         public string Username { get; set; }
         public string UserEmail { get; set; }
-        public bool Active { get; set; }
+        //public Guid Team_Key { get; set; } is this needed?
     }
 }

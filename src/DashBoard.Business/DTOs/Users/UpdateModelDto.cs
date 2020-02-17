@@ -14,9 +14,6 @@ namespace DashBoard.Business.DTOs.Users
         [Required]
         [EmailAddress]
         public string UserEmail { get; set; }
-        [Required]
-        public bool Active { get; set; }
-        [Required]
-        public string Role { get; set; }
+        public bool UpdatedByAdmin { get; set; }
     }
 }

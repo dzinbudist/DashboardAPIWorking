@@ -2,7 +2,6 @@
 {
     public enum ServiceType
     {
-        WebApp,
         ServiceRest,
         ServiceSoap
     }

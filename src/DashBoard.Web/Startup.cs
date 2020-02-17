@@ -8,6 +8,7 @@ using DashBoard.Web.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,8 +30,9 @@ namespace DashBoard.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //This is used to get current User of request.
 
-
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); 
             //Uzkomentinau sita koda, ir naudojam tik DataContext su SQLserver:
             services.AddDbContext<DataContext>(options => options.UseSqlServer(_configuration["ConnectionStrings:WebApiDatabase"]));
             //****

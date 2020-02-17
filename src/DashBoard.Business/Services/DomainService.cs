@@ -12,7 +12,7 @@ namespace DashBoard.Business.Services
     {
         DomainModelDto GetById(int id);
         IEnumerable<DomainModelDto> GetAllNotDeleted();
-        DomainModelDto Create(DomainForCreationDto domain);
+        DomainModelDto Create(DomainForCreationDto domain, string userId);
         object Update(int id, DomainForUpdateDto domain);
         object PseudoDelete(int id);
     }
@@ -25,12 +25,14 @@ namespace DashBoard.Business.Services
             _context = context;
             _mapper = mapper;
         }
-        public DomainModelDto Create(DomainForCreationDto domain)
+        public DomainModelDto Create(DomainForCreationDto domain, string userId)
         {
             var domainEntity = _mapper.Map<DomainModel>(domain);
+            var loggedInUser = _context.Users.First(user => user.Id == Convert.ToInt32(userId));
 
-            // dbr default poto:
-            //domainEntity.Created_By = MiscFunctions.GetCurentUser(this.User);
+            domainEntity.Created_By = loggedInUser.Id;
+
+            domainEntity.Team_Key = loggedInUser.Team_Key;
 
             _context.Domains.Add(domainEntity);
 

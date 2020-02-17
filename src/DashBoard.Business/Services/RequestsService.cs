@@ -13,7 +13,6 @@ namespace DashBoard.Business.Services
 {
     public interface IRequestService
     {
-        Task<object> GetDomainByUrl(int id);
         Task<object> GetService(int id);
     }
     public class RequestsService: IRequestService
@@ -24,42 +23,6 @@ namespace DashBoard.Business.Services
             _context = context;
         }
 
-        public async Task<object> GetDomainByUrl(int id)
-        {
-            var domainModel = _context.Domains.Find(id);
-
-            if (domainModel != null)
-            {
-                try
-                {
-                    if (domainModel.Service_Type == ServiceType.WebApp)
-                    { 
-                        HttpClient client = new HttpClient();
-                        client.BaseAddress = new Uri(domainModel.Url);
-                        client.DefaultRequestHeaders.Accept.Clear();
-
-                        //do request and count response time
-                        var sw = new Stopwatch();
-                        sw.Start();
-                        HttpResponseMessage response = await client.GetAsync("");
-                        sw.Stop();
-
-                        SaveLog(domainModel, response);
-
-                        return GetResponseObject(domainModel, sw, response);
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                }
-                catch
-                {
-                    return GetFailObject(domainModel);
-                }
-            }
-            return null;
-        }
 
         public async Task<object> GetService(int id)
         {
@@ -71,7 +34,7 @@ namespace DashBoard.Business.Services
                 client.BaseAddress = new Uri(domainModel.Url);
                 client.DefaultRequestHeaders.Accept.Clear();
 
-                if (domainModel.Service_Type == ServiceType.ServiceRest || domainModel.Service_Type == ServiceType.WebApp)
+                if (domainModel.Service_Type == ServiceType.ServiceRest)
                 {
 
                     if (domainModel.Method == RequestMethod.Get)
@@ -166,7 +129,8 @@ namespace DashBoard.Business.Services
                 {
                     Domain_Id = domainModel.Id,
                     Log_Date = DateTime.Now,
-                    Error_Text = response.StatusCode.ToString()
+                    Error_Text = response.StatusCode.ToString(),
+                    Team_Key = domainModel.Team_Key
                 };
                 _context.Logs.Add(logEntry);
                 _context.SaveChanges();
