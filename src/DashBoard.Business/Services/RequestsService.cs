@@ -8,14 +8,13 @@ using DashBoard.Data.Data;
 using DashBoard.Data.Enums;
 using DashBoard.Data.Entities;
 using System.Net.Http.Headers;
-using DashBoard.Business.DTOs.Domains;
 
 namespace DashBoard.Business.Services
 {
     public interface IRequestService
     {
         Task<object> GetDomainByUrl(int id);
-        Task<object> GetService(int id, DomainForCreationDto domain); //, 
+        Task<object> GetService(int id);
     }
     public class RequestsService: IRequestService
     {
@@ -62,21 +61,11 @@ namespace DashBoard.Business.Services
             return null;
         }
 
-        public async Task<object> GetService(int id, DomainForCreationDto domain)
+        public async Task<object> GetService(int id)
         {
-            DomainModel domainModel;
+            var domainModel = _context.Domains.Find(id);
 
-            if (domain == null )
-            {
-                domainModel = _context.Domains.Find(id);
-            }
-            else
-            {
-                domainModel = GetDomainModel(domain);
-            }
-
-
-            if (domainModel != null)
+            if (domainModel != null)            
             {
                 HttpClient client = new HttpClient();
                 client.BaseAddress = new Uri(domainModel.Url);
@@ -94,8 +83,8 @@ namespace DashBoard.Business.Services
                     {
                         HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "");
                         return await DoRequest(client, request, domainModel, "application/json");
-                    }
-                }
+                    }                    
+                } 
                 else if (domainModel.Service_Type == ServiceType.ServiceSoap)
                 {
                     HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "");
@@ -105,7 +94,6 @@ namespace DashBoard.Business.Services
             }
             return null;
         }
-
 
         async Task<object> DoRequest(HttpClient client, HttpRequestMessage request, DomainModel domainModel, string mediaType)
         {
@@ -140,16 +128,11 @@ namespace DashBoard.Business.Services
                 var response = await client.SendAsync(request);
                 sw.Stop();
 
-                if (domainModel.Id != -555 && domainModel.Service_Name != "ModelForTesting")
-                {
-                    SaveLog(domainModel, response);
-                }
-
+                SaveLog(domainModel, response);
                 return GetResponseObject(domainModel, sw, response);
             }
             catch
             {
-                SaveLogFailed(domainModel);
                 return GetFailObject(domainModel);
             }
         }
@@ -188,40 +171,6 @@ namespace DashBoard.Business.Services
                 _context.Logs.Add(logEntry);
                 _context.SaveChanges();
             }
-        }
-
-        private void SaveLogFailed(DomainModel domainModel)
-        {
-            domainModel.Last_Fail = DateTime.Now;
-            // new LogModel entity added to Database
-            var logEntry = new LogModel
-            {
-                Domain_Id = domainModel.Id,
-                Log_Date = DateTime.Now,
-                Error_Text = "Server not found"
-            };
-            _context.Logs.Add(logEntry);
-            _context.SaveChanges();
-        }
-
-        private static DomainModel GetDomainModel(DomainForCreationDto domain)
-        {
-            DomainModel modelForTest = new DomainModel();
-
-            modelForTest.Id = -555;
-            modelForTest.Service_Name = "ModelForTesting";
-            modelForTest.Service_Type = domain.Service_Type;
-            modelForTest.Url = domain.Url;
-            modelForTest.Method = domain.Method;
-            modelForTest.Notification_Email = domain.Notification_Email;
-            modelForTest.Basic_Auth = domain.Basic_Auth;
-            modelForTest.Auth_User = domain.Auth_User;
-            modelForTest.Auth_Password = domain.Auth_Password;
-            modelForTest.Parameters = domain.Parameters;
-            modelForTest.Active = domain.Active;
-            modelForTest.Interval_Ms = 4000;
-
-            return modelForTest;
         }
     }
 }
