@@ -30,9 +30,9 @@ namespace DashBoard.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //This is used to get current User of request.
+            // Register the Swagger services
+            services.AddSwaggerDocument();
 
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); 
             //Uzkomentinau sita koda, ir naudojam tik DataContext su SQLserver:
             services.AddDbContext<DataContext>(options => options.UseSqlServer(_configuration["ConnectionStrings:WebApiDatabase"]));
             //****
@@ -90,7 +90,6 @@ namespace DashBoard.Web
 
             // configure DI for application services
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IPingService, PingService>();
             services.AddScoped<IDomainService, DomainService>();
             services.AddScoped<ILogsService, LogsService>();
             services.AddScoped<IRequestService, RequestsService>();
@@ -100,6 +99,9 @@ namespace DashBoard.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DataContext dataContext)
         {
+            // Register the Swagger generator and the Swagger UI middlewares
+            app.UseOpenApi();
+            app.UseSwaggerUi3();
             //migrate any database changes on startup(includes initial db creation)
             dataContext.Database.Migrate();
 
