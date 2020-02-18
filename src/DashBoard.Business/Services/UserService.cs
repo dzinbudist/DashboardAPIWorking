@@ -26,7 +26,7 @@ namespace DashBoard.Business.Services
         private readonly IMapper _mapper;
 
         private readonly string validPasswordPattern =
-            "^((?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])|(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[^a-zA-Z0-9])|(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[^a-zA-Z0-9])|(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^a-zA-Z0-9])).{8,}$";
+            "^((?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])|(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[^a-zA-Z0-9])|(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[^a-zA-Z0-9])|(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^a-zA-Z0-9])).{10,}$";
         public UserService(DataContext context, IMapper mapper)
         {
             _mapper = mapper;
@@ -80,7 +80,7 @@ namespace DashBoard.Business.Services
             //check if password is strong enough
             if (!Regex.IsMatch(password, validPasswordPattern))
             {
-                throw new AppException("Passwords must be at least 8 characters and contain at least 3 of 4 of the following: upper case (A - Z), lower case (a - z), number(0 - 9) and special character(e.g. !@#$%^&*)");
+                throw new AppException("Passwords must be at least 10 characters and contain at least 3 of 4 of the following: upper case (A - Z), lower case (a - z), number(0 - 9) and special character(e.g. !@#$%^&*)");
             }
 
             if (_context.Users.Any(x => x.Username == user.Username))
@@ -130,7 +130,7 @@ namespace DashBoard.Business.Services
             //check if password is strong enough
             if (!Regex.IsMatch(password, validPasswordPattern))
             {
-                throw new AppException("Passwords must be at least 8 characters and contain at least 3 of 4 of the following: upper case (A - Z), lower case (a - z), number(0 - 9) and special character(e.g. !@#$%^&*)");
+                throw new AppException("Passwords must be at least 10 characters and contain at least 3 of 4 of the following: upper case (A - Z), lower case (a - z), number(0 - 9) and special character(e.g. !@#$%^&*)");
             }
 
             // update username if it has changed
