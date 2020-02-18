@@ -68,6 +68,8 @@ namespace DashBoard.Business.Services
             // validation
             if (string.IsNullOrWhiteSpace(password))
                 throw new AppException("Password is required");
+            //if (password) lengas{
+
 
             if (_context.Users.Any(x => x.Username == user.Username))
                 throw new AppException("Username \"" + user.Username + "\" is already taken");
