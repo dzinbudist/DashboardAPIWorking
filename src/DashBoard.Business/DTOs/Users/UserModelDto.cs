@@ -9,6 +9,7 @@ namespace DashBoard.Business.DTOs.Users
         public string LastName { get; set; }
         public string Username { get; set; }
         public string UserEmail { get; set; }
-        //public Guid Team_Key { get; set; } is this needed?
+        public string Role { get; set; }
+        public Guid Team_Key { get; set; } 
     }
 }
