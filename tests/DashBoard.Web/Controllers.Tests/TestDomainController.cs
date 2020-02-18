@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
+using AutoMapper.Configuration.Annotations;
 using DashBoard.Business.DTOs.Domains;
 using DashBoard.Business.Services;
 using DashBoard.Data.Entities;
@@ -18,7 +19,6 @@ namespace Controllers.Tests
     {
 
         //TestGetDomainModel
-
         [Fact]
         public void TestGetDomainModel_ReturnsOkObjectAndDomainDto() 
         {
@@ -111,6 +111,7 @@ namespace Controllers.Tests
         }
 
         //TestCreateDomainModel
+        
         [Fact]
         public void TestCreateDomainModel_ReturnsNewlyCreatedDomain()
         {
@@ -121,8 +122,9 @@ namespace Controllers.Tests
                 Url = "www.test.com",
                 Notification_Email = "test@test.com"
             };
+            var userId = "2"; //user id that makes the request
             var mockService = new Mock<IDomainService>();
-            mockService.Setup(service => service.Create(newDomain))
+            mockService.Setup(service => service.Create(newDomain, userId))
                 .Returns(new DomainModelDto(){Id = 1});
             var controller = new DomainController(mockService.Object);
             

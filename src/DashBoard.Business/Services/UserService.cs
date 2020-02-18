@@ -83,8 +83,11 @@ namespace DashBoard.Business.Services
                 user.Role = Role.User;
                 user.Team_Key = admin.Team_Key;
             }
-            user.Role = Role.Admin; // Role.
-            user.Team_Key = Guid.NewGuid();
+            else
+            {
+                user.Role = Role.Admin;
+                user.Team_Key = Guid.NewGuid();
+            }
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
             user.Date_Modified = DateTime.Now;

@@ -1,11 +1,14 @@
 ﻿using DashBoard.Business.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DashBoard.Web.Controllers
 {
-    [Route("[controller]")]
+    [Authorize]
     [ApiController]
+    [Route("[controller]")]
+    
     public class LogsController : ControllerBase
     {
         private readonly ILogsService _logsService;

@@ -110,8 +110,9 @@ namespace Controllers.Tests
                 FirstName = "newName",
                 LastName = "newLastName"
             };
+            var userId = "2";
             var mockUserService = new Mock<IUserService>();
-            mockUserService.Setup(service => service.Update(1, updatedUser));
+            mockUserService.Setup(service => service.Update(1, updatedUser, userId));
             var mockTokenService = new Mock<ITokenService>();
             var mockAppSettings = new Mock<IOptions<AppSettings>>();
 
@@ -131,8 +132,9 @@ namespace Controllers.Tests
                 FirstName = "newName",
                 LastName = "newLastName"
             };
+            var userId = "2";
             var mockUserService = new Mock<IUserService>();
-            mockUserService.Setup(service => service.Update(1, wrongUpdatedUser))
+            mockUserService.Setup(service => service.Update(1, wrongUpdatedUser, userId))
                 .Throws<AppException>();
             var mockTokenService = new Mock<ITokenService>();
             var mockAppSettings = new Mock<IOptions<AppSettings>>();
@@ -162,8 +164,9 @@ namespace Controllers.Tests
         void TestRegister_ReturnsOkResult()
         {
             //Arrange
+            var userId = "2";
             var mockUserService = new Mock<IUserService>();
-            mockUserService.Setup(service => service.Create(It.IsAny<RegisterModelDto>(), "testPassword"))
+            mockUserService.Setup(service => service.Create(It.IsAny<RegisterModelDto>(), "testPassword", userId))
                 .Returns(new User());
             var mockTokenService = new Mock<ITokenService>();
             var mockAppSettings = new Mock<IOptions<AppSettings>>();
@@ -178,8 +181,9 @@ namespace Controllers.Tests
         void TestRegister_ReturnsBadRequest()
         {
             //Arrange
+            var userId = "2";
             var mockUserService = new Mock<IUserService>();
-            mockUserService.Setup(service => service.Create(It.IsAny<RegisterModelDto>(), It.IsAny<string>()))
+            mockUserService.Setup(service => service.Create(It.IsAny<RegisterModelDto>(), It.IsAny<string>(), userId))
                 .Throws(new AppException());
             var mockTokenService = new Mock<ITokenService>();
             var mockAppSettings = new Mock<IOptions<AppSettings>>();

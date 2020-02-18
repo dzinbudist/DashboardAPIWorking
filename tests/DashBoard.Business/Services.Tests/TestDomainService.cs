@@ -102,8 +102,9 @@ namespace Services.Tests
             //Act
             using (var context = new DataContext(options))
             {
+                var userId = "2";
                 var service = new DomainService(context, mapper);
-                var result = service.Create(testModel);
+                var result = service.Create(testModel, userId);
                 Assert.Equal(default, result.Parameters); //check for some un-set property if it becomes default after Create service
                 Assert.False(result.Deleted);
                 Assert.IsType<DomainModelDto>(result);

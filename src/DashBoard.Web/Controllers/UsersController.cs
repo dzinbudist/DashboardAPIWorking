@@ -88,6 +88,7 @@ namespace DashBoard.Web.Controllers
             }
         }
 
+        [Authorize(Roles = Role.Admin)]
         [HttpGet]
         public IActionResult GetAll()
         {
@@ -137,6 +138,7 @@ namespace DashBoard.Web.Controllers
             }
         }
 
+        [Authorize(Roles = Role.Admin)]
         [HttpDelete("{id}")] //this might be missing not found actionResult.
         public IActionResult Delete(int id)
         {

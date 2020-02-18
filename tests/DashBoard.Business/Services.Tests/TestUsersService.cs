@@ -33,8 +33,9 @@ namespace Services.Tests
             //Act
             using (var context = new DataContext(dbOptions))
             {
+                var userId = "2";
                 var service = new  UserService(context, mapper);
-                var createResult = service.Create(newUser, newUser.Password); //authenticate needs creation first. This ain't ideal for testing.
+                var createResult = service.Create(newUser, newUser.Password, userId); //authenticate needs creation first. This ain't ideal for testing.
                 var authenticateResult = service.Authenticate(newUser.Username, newUser.Password);
                 var badAuthenticateResult = service.Authenticate(newUser.Username, "badpassword");
 
@@ -65,8 +66,9 @@ namespace Services.Tests
             using (var context = new DataContext(dbOptions))
             {
                 var service = new UserService(context, mapper);
-                service.Create(newUser1, newUser1.Password); //this might need to be mocked in the future.
-                service.Create(newUser2, newUser2.Password);
+                var userId = "2";
+                service.Create(newUser1, newUser1.Password, userId); //this might need to be mocked in the future.
+                service.Create(newUser2, newUser2.Password, userId);
                 var getByIdResult = service.GetById(1);
                 var getAllResult = service.GetAll();
 
@@ -97,11 +99,12 @@ namespace Services.Tests
             //Act
             using (var context = new DataContext(dbOptions))
             {
+                var userId = "2";
                 var service = new UserService(context, mapper);
-                service.Create(newUser1, newUser1.Password); //this might need to be mocked in the future.
-                service.Create(newUser2, newUser2.Password);
+                service.Create(newUser1, newUser1.Password, userId); //this might need to be mocked in the future.
+                service.Create(newUser2, newUser2.Password, userId);
                 service.Delete(1);
-                service.Update(2, updateUser);
+                service.Update(2, updateUser, userId);
 
                 //Assert
                 Assert.Equal("anon2", context.Users.Find(2).Username);

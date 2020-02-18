@@ -1,12 +1,14 @@
 ﻿using DashBoard.Business.DTOs.Domains;
 using DashBoard.Business.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DashBoard.Web.Controllers
 {
-    [Route("[controller]")]
     [ApiController]
+    [Authorize]
+    [Route("[controller]")]
     public class DomainController : ControllerBase
     {
         private readonly IDomainService _domainService;
@@ -16,7 +18,6 @@ namespace DashBoard.Web.Controllers
             _domainService = domainService;
         }
 
-        // GET: api/Domain
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)] //are these necessary ? Removed them from other actions.
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -30,7 +31,6 @@ namespace DashBoard.Web.Controllers
             return Ok(result);
         }
 
-        // GET: api/Domain/5
         [HttpGet("{id}")]
         public IActionResult GetDomainModel(int id)
         {
@@ -68,7 +68,6 @@ namespace DashBoard.Web.Controllers
             return Ok();
         }
 
-        // PUT for delete: api/Domain/5
         [HttpPut("del/{id}")]
         public IActionResult PseudoDeleteDomainModel(int id)
         {
