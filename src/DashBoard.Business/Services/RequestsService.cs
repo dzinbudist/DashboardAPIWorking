@@ -8,12 +8,13 @@ using DashBoard.Data.Data;
 using DashBoard.Data.Enums;
 using DashBoard.Data.Entities;
 using System.Net.Http.Headers;
+using DashBoard.Business.DTOs.Domains;
 
 namespace DashBoard.Business.Services
 {
     public interface IRequestService
     {
-        Task<object> GetService(int id);
+        Task<object> GetService(int id, DomainForCreationDto domain);
     }
     public class RequestsService: IRequestService
     {
@@ -24,9 +25,18 @@ namespace DashBoard.Business.Services
         }
 
 
-        public async Task<object> GetService(int id)
+        public async Task<object> GetService(int id, DomainForCreationDto domain)
         {
-            var domainModel = _context.Domains.Find(id);
+            DomainModel domainModel;
+
+            if (domain == null)
+            {
+                domainModel = _context.Domains.Find(id);
+            }
+            else
+            {
+                domainModel = GetDomainModel(domain);
+            }
 
             if (domainModel != null)            
             {
@@ -135,6 +145,27 @@ namespace DashBoard.Business.Services
                 _context.Logs.Add(logEntry);
                 _context.SaveChanges();
             }
+        }
+
+        private static DomainModel GetDomainModel(DomainForCreationDto domain)
+        {
+            DomainModel modelForTest = new DomainModel
+            {
+                Id = -555,
+                Service_Name = "ModelForTesting",
+                Service_Type = domain.Service_Type,
+                Url = domain.Url,
+                Method = domain.Method,
+                Notification_Email = domain.Notification_Email,
+                Basic_Auth = domain.Basic_Auth,
+                Auth_User = domain.Auth_User,
+                Auth_Password = domain.Auth_Password,
+                Parameters = domain.Parameters,
+                Active = domain.Active,
+                Interval_Ms = 4000
+            };
+
+            return modelForTest;
         }
     }
 }
