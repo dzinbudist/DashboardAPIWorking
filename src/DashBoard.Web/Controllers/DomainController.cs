@@ -1,4 +1,5 @@
-﻿using DashBoard.Business.DTOs.Domains;
+﻿using System.Threading.Tasks;
+using DashBoard.Business.DTOs.Domains;
 using DashBoard.Business.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -12,7 +13,7 @@ namespace DashBoard.Web.Controllers
     public class DomainController : ControllerBase
     {
         private readonly IDomainService _domainService;
-        public string LoggedInUser => User.Identity.Name; //this gets current user ID
+        public string LoggedInUser => User.Identity.Name; //this gets current user ID. We need to pass it to services in parameters. This is not ideal, couldn't find a way to get user in controller.
         public DomainController(IDomainService domainService)
         {
             _domainService = domainService;
@@ -23,7 +24,8 @@ namespace DashBoard.Web.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetAllNotDeletedDomains()
         {
-            var result = _domainService.GetAllNotDeleted();
+            var userId = LoggedInUser;
+            var result = _domainService.GetAllNotDeleted(userId);
             if (result == null)
             {
                 return NotFound(); //NoContent() is also an option here.
@@ -43,15 +45,15 @@ namespace DashBoard.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateDomainModel(DomainForCreationDto domain)
+        public async Task<IActionResult> CreateDomainModel(DomainForCreationDto domain)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             var userId = LoggedInUser;
-            var result = _domainService.Create(domain, userId);
+            var result = await _domainService.Create(domain, userId);
             return CreatedAtAction("GetDomainModel", new {id = result.Id}, result);
-
         }
 
+        //this might need protection from deleting/updating not your team_key items.
         [HttpPut("{id}")]
         public IActionResult EditDomainModel(int id, DomainForUpdateDto domain) //client has to send full DomaintForUPdateDto model. Other option is to use Patch HTTP method instead of PUT
         {
@@ -59,7 +61,9 @@ namespace DashBoard.Web.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var result = _domainService.Update(id, domain);
+
+            var userId = LoggedInUser;
+            var result = _domainService.Update(id, domain, userId);
             if (result == null)
             {
                 return NotFound();
@@ -71,7 +75,8 @@ namespace DashBoard.Web.Controllers
         [HttpPut("del/{id}")]
         public IActionResult PseudoDeleteDomainModel(int id)
         {
-            var result = _domainService.PseudoDelete(id);
+            var userId = LoggedInUser;
+            var result = _domainService.PseudoDelete(id, userId);
             if (result == null)
             {
                 return NotFound();

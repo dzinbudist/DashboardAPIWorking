@@ -17,7 +17,7 @@ namespace DashBoard.Business.Services
         UserModelDto GetById(int id);
         User Create(RegisterModelDto model, string password, string userId);
         void Update(int id, UpdateModelDto model, string userId);
-        void Delete(int id);
+        void Delete(int id, string userId);
     }
 
     public class UserService : IUserService
@@ -116,8 +116,14 @@ namespace DashBoard.Business.Services
             // map model to entity
             var password = model.Password; //get user sent password, before mapping.
             var modelWithNewParams = _mapper.Map<User>(model);
-            //find excising user
-            var user = _context.Users.Find(id);
+
+            //user that's making this update
+
+            var userMakingThisUpdate = _context.Users.First(c => c.Id == Convert.ToInt32(userId));
+            var teamKey = userMakingThisUpdate.Team_Key;
+
+            //find excising user to update in Database
+            var user = _context.Users.FirstOrDefault(x => x.Id == id && x.Team_Key == teamKey);
 
             if (user == null)
                 throw new AppException("User not found");
@@ -151,13 +157,7 @@ namespace DashBoard.Business.Services
                 user.LastName = modelWithNewParams.LastName;
 
             user.Date_Modified = DateTime.Now;
-            if (model.UpdatedByAdmin)
-            {
-                var admin = _context.Users.First(c => c.Id == Convert.ToInt32(userId));
-                user.Modified_By = admin.Id;
-            }
-            user.Modified_By = Convert.ToInt32(userId);
-
+            user.Modified_By = userMakingThisUpdate.Id;
             //this is missing email update !!
 
             // update password if provided
@@ -174,9 +174,12 @@ namespace DashBoard.Business.Services
             _context.SaveChanges();
         }
 
-        public void Delete(int id)
+        public void Delete(int id, string userId)
         {
-            var user = _context.Users.Find(id);
+            var userMakingThisDelete = _context.Users.First(c => c.Id == Convert.ToInt32(userId));
+            var teamKey = userMakingThisDelete.Team_Key;
+            //check if there is such a user in team with such Id.
+            var user = _context.Users.FirstOrDefault(x => x.Id == id && x.Team_Key == teamKey);
             if (user != null)
             {
                 _context.Users.Remove(user);

@@ -1,20 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using DashBoard.Business.DTOs.Domains;
 using DashBoard.Data.Data;
 using DashBoard.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace DashBoard.Business.Services
 {
     public interface IDomainService
     {
         DomainModelDto GetById(int id);
-        IEnumerable<DomainModelDto> GetAllNotDeleted();
-        DomainModelDto Create(DomainForCreationDto domain, string userId);
-        object Update(int id, DomainForUpdateDto domain);
-        object PseudoDelete(int id);
+        IEnumerable<DomainModelDto> GetAllNotDeleted(string userId);
+        Task<DomainModelDto> Create(DomainForCreationDto domain, string userId);
+        object Update(int id, DomainForUpdateDto domain, string userId);
+        object PseudoDelete(int id, string userId);
     }
     public class DomainService : IDomainService
     {
@@ -25,10 +27,11 @@ namespace DashBoard.Business.Services
             _context = context;
             _mapper = mapper;
         }
-        public DomainModelDto Create(DomainForCreationDto domain, string userId)
+        //random uses of async methods. No idea when it's appropriate and when it's not
+        public async Task<DomainModelDto> Create(DomainForCreationDto domain, string userId)
         {
             var domainEntity = _mapper.Map<DomainModel>(domain);
-            var loggedInUser = _context.Users.First(user => user.Id == Convert.ToInt32(userId));
+            var loggedInUser = await GetUserById(userId);
 
             domainEntity.Created_By = loggedInUser.Id;
 
@@ -49,11 +52,14 @@ namespace DashBoard.Business.Services
             return domainDto;
         }
 
-        public IEnumerable<DomainModelDto> GetAllNotDeleted()
+        public IEnumerable<DomainModelDto> GetAllNotDeleted(string userId)
         {
             try
             {
-                var domains = _context.Domains.Where(x => x.Deleted == false).ToList();
+                var user = GetUserById(userId);
+                var teamKey = user.Result.Team_Key; //what's the difference if i use async method and await for Task<> here?
+                //gets domains that are not deleted and belongs to user team.
+                var domains = _context.Domains.Where(x => x.Deleted == false && x.Team_Key == teamKey).ToList();
                 if (!domains.Any())
                 {
                     return null;
@@ -80,10 +86,13 @@ namespace DashBoard.Business.Services
             return domainDto;
         }
 
-        public object PseudoDelete(int id)
+        public object PseudoDelete(int id, string userId)
         {
+            var user = GetUserById(userId);
 
-            var domainModel = _context.Domains.FirstOrDefault(x=>x.Id ==id && x.Deleted==false);
+            var teamKey = user.Result.Team_Key;
+
+            var domainModel = _context.Domains.FirstOrDefault(x=>x.Id ==id && x.Deleted==false && x.Team_Key == teamKey);
             if (domainModel == null)
             {
                 return null;
@@ -96,20 +105,30 @@ namespace DashBoard.Business.Services
 
         }
 
-        public object Update(int id, DomainForUpdateDto domain)
-        {
-            var updatedModel = _context.Domains.FirstOrDefault(x => x.Id == id && x.Deleted==false);
+        public object Update(int id, DomainForUpdateDto domain, string userId)
+        {   
+            var user = GetUserById(userId);
+            var teamKey = user.Result.Team_Key;
+            var updatedModel = _context.Domains.FirstOrDefault(x => x.Id == id && x.Deleted==false && x.Team_Key == teamKey);
             if (updatedModel == null)
             {
                 return null;
             }
 
-            //updatedModel.Modified_By = MiscFunctions.GetCurentUser(this.User);    
+            updatedModel.Modified_By = user.Result.Id; 
             updatedModel.Date_Modified = DateTime.Now;
             _mapper.Map(domain, updatedModel);
             _context.Domains.Update(updatedModel);
             _context.SaveChanges();
             return new { message = $"Updated domain with {id} id" }; //client doesn't see this. It's just for something to return.
+        }
+
+        //private helper methods.
+        private async Task<User> GetUserById(string userId)
+        {
+            //this takes string, because controller passes identity name(id) from claim, which is string.
+            var user = await _context.Users.FindAsync(Convert.ToInt32(userId));
+            return user;
         }
     }
 }
