@@ -13,7 +13,7 @@ namespace DashBoard.Business.Services
     public interface IUserService
     {
         User Authenticate(string username, string password);
-        IEnumerable<UserModelDto> GetAll();
+        IEnumerable<UserModelDto> GetAll(string userId);
         UserModelDto GetById(int id);
         User Create(RegisterModelDto model, string password, string userId);
         void Update(int id, UpdateModelDto model, string userId);
@@ -26,7 +26,7 @@ namespace DashBoard.Business.Services
         private readonly IMapper _mapper;
 
         private readonly string validPasswordPattern =
-            "^((?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])|(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[^a-zA-Z0-9])|(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[^a-zA-Z0-9])|(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^a-zA-Z0-9])).{10,}$";
+            "^(?=\\S*[a-z])(?=\\S*[A-Z])(?=\\S*\\d)(?=\\S*[!\"#$%&'()*+,./:;<=>?@[\\\\\\]^_`{|}~-])\\S{10,128}$";
         public UserService(DataContext context, IMapper mapper)
         {
             _mapper = mapper;
@@ -52,16 +52,18 @@ namespace DashBoard.Business.Services
             return user;
         }
 
-        public IEnumerable<UserModelDto> GetAll()
+        public IEnumerable<UserModelDto> GetAll(string userId)
         {
-            var users = _context.Users;
+            var userMakingThisRequest = _context.Users.First(c => c.Id == Convert.ToInt32(userId));
+            var teamKey = userMakingThisRequest.Team_Key;
+            var users = _context.Users.Where(x => x.Team_Key == teamKey);
             var usersDto = _mapper.Map<IList<UserModelDto>>(users);
             return usersDto;
         }
 
         public UserModelDto GetById(int id)
         {
-            var user = _context.Users.Find(id);
+            var user = _context.Users.Find(id); //you can find other team IDs. I didn't change it here, because you need to reconfig JWT token.
             var userDto = _mapper.Map<UserModelDto>(user);
             return userDto;
         }
@@ -80,7 +82,7 @@ namespace DashBoard.Business.Services
             //check if password is strong enough
             if (!Regex.IsMatch(password, validPasswordPattern))
             {
-                throw new AppException("Passwords must be at least 10 characters and contain at least 3 of 4 of the following: upper case (A - Z), lower case (a - z), number(0 - 9) and special character(e.g. !@#$%^&*)");
+                throw new AppException("Passwords must be at least 10 characters and contain: upper case (A - Z), lower case (a - z), number(0 - 9) and special character(e.g. !@#$%^&*)");
             }
 
             if (_context.Users.Any(x => x.Username == user.Username))
@@ -91,6 +93,7 @@ namespace DashBoard.Business.Services
 
             if (model.CreatedByAdmin)
             {
+                //admin thats making this request
                 var admin = _context.Users.First(c => c.Id == Convert.ToInt32(userId));
                 user.Created_By = admin.Id;
                 user.Modified_By = admin.Id;
@@ -113,9 +116,8 @@ namespace DashBoard.Business.Services
         }
         public void Update(int id, UpdateModelDto model, string userId)
         {
-            // map model to entity
-            var password = model.Password; //get user sent password, before mapping.
-            var modelWithNewParams = _mapper.Map<User>(model);
+
+            //cia nera password checkinngo !!!
 
             //user that's making this update
 
@@ -127,6 +129,16 @@ namespace DashBoard.Business.Services
 
             if (user == null)
                 throw new AppException("User not found");
+            
+            //check if user doesn't try to update other users.
+            if (!userMakingThisUpdate.Role.Equals("Admin") && userMakingThisUpdate.Id != user.Id)
+            {
+                throw new AppException("You can't update this user");
+            }
+
+            // map model to entity
+            var password = model.Password; //get user sent password, before mapping.
+            var modelWithNewParams = _mapper.Map<User>(model);
 
             //password validation
             if (password != model.ConfirmPassword)
@@ -136,7 +148,7 @@ namespace DashBoard.Business.Services
             //check if password is strong enough
             if (!Regex.IsMatch(password, validPasswordPattern))
             {
-                throw new AppException("Passwords must be at least 10 characters and contain at least 3 of 4 of the following: upper case (A - Z), lower case (a - z), number(0 - 9) and special character(e.g. !@#$%^&*)");
+                throw new AppException("Passwords must be at least 10 characters and contain: upper case (A - Z), lower case (a - z), number(0 - 9) and special character(e.g. !@#$%^&*)");
             }
 
             // update username if it has changed
@@ -156,8 +168,6 @@ namespace DashBoard.Business.Services
             if (!string.IsNullOrWhiteSpace(modelWithNewParams.LastName))
                 user.LastName = modelWithNewParams.LastName;
 
-            user.Date_Modified = DateTime.Now;
-            user.Modified_By = userMakingThisUpdate.Id;
             //this is missing email update !!
 
             // update password if provided
@@ -169,6 +179,17 @@ namespace DashBoard.Business.Services
                 user.PasswordHash = passwordHash;
                 user.PasswordSalt = passwordSalt;
             }
+            // update role if provided and check if user is admin.
+            if (userMakingThisUpdate.Role.Equals("Admin") && model.Role != user.Role)
+            {
+                if (model.Role != "Admin" || model.Role != "User")
+                {
+                    throw new AppException("No such role: " + model.Role);
+                }
+                user.Role = model.Role;
+            }
+            user.Date_Modified = DateTime.Now;
+            user.Modified_By = userMakingThisUpdate.Id;
 
             _context.Users.Update(user);
             _context.SaveChanges();

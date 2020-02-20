@@ -11,7 +11,7 @@ namespace DashBoard.Business.Services
     public interface ILogsService
     {
         IEnumerable<LogModelDto> GetAllLogs(string userId);
-        IEnumerable<LogModelDto> GetLogsByDomainId(int id);
+        IEnumerable<LogModelDto> GetLogsByDomainId(int id, string userId);
     }
     public class LogsService : ILogsService
     {
@@ -32,10 +32,11 @@ namespace DashBoard.Business.Services
             return logsDto.Any() ? logsDto : null;
         }
 
-        public IEnumerable<LogModelDto> GetLogsByDomainId(int id)
+        public IEnumerable<LogModelDto> GetLogsByDomainId(int id, string userId)
         {
-            //this doesn't check team_key, but it's probably unnecessary, because domain_id's are unique. 
-            var logs = _context.Logs.Where(x => x.Domain_Id == id).ToList();
+            var userMakingThisRequest = _context.Users.Find(Convert.ToInt32(userId));
+            var teamKey = userMakingThisRequest.Team_Key;
+            var logs = _context.Logs.Where(x => x.Domain_Id == id && x.Team_Key == teamKey).ToList();
             var logsDto = _mapper.Map<IEnumerable<LogModelDto>>(logs);
             return logsDto.Any() ? logsDto : null;
         }

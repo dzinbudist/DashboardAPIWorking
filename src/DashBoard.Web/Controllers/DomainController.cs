@@ -36,7 +36,8 @@ namespace DashBoard.Web.Controllers
         [HttpGet("{id}")]
         public IActionResult GetDomainModel(int id)
         {
-            var result = _domainService.GetById(id);
+            var userId = LoggedInUser;
+            var result = _domainService.GetById(id, userId);
             if(result == null)
             {
                 return NotFound(); //NoContent() is also an option here.

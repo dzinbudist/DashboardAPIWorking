@@ -40,7 +40,8 @@ namespace DashBoard.Web.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetLogsByDomain(int id)
         {
-            var result = _logsService.GetLogsByDomainId(id);
+            var userId = LoggedInUser;
+            var result = _logsService.GetLogsByDomainId(id, userId);
             if (result == null)
             {
                 return NotFound(); //NoContent() is also an option here.

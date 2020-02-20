@@ -12,7 +12,7 @@ namespace DashBoard.Business.Services
 {
     public interface IDomainService
     {
-        DomainModelDto GetById(int id);
+        DomainModelDto GetById(int id, string userId);
         IEnumerable<DomainModelDto> GetAllNotDeleted(string userId);
         Task<DomainModelDto> Create(DomainForCreationDto domain, string userId);
         object Update(int id, DomainForUpdateDto domain, string userId);
@@ -75,9 +75,11 @@ namespace DashBoard.Business.Services
             
         }
 
-        public DomainModelDto GetById(int id)
+        public DomainModelDto GetById(int id, string userId)
         {
-            var domain = _context.Domains.FirstOrDefault(x => x.Id == id && x.Deleted==false);
+            var user = GetUserById(userId);
+            var teamKey = user.Result.Team_Key;
+            var domain = _context.Domains.FirstOrDefault(x => x.Id == id && x.Deleted==false && x.Team_Key == teamKey);
             if (domain == null)
             {
                 return null;
