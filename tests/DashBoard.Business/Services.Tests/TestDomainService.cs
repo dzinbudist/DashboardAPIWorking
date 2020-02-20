@@ -16,6 +16,8 @@ using Xunit;
 
 namespace Services.Tests
 {
+
+    //I recommend checking helper class at the bottom and get familiar with the seed data we use to populate databases in tests. When you know what data we have, these tests are self explanatory.
     public class TestDomainService
     {
         [Fact]
@@ -33,15 +35,16 @@ namespace Services.Tests
             //Act
             using (var context = new DataContext(options))
             {
-                context.Domains.AddRange(SeedEntitiesDomainModels());
+                context.Domains.AddRange(SeedFakeData.SeedEntitiesDomainModels());
+                context.Users.AddRange(SeedFakeData.SeedEntitiesUsersModels());
                 context.SaveChanges();
             }
             
             using (var context = new DataContext(options))
             {
                 var service = new DomainService(context, mapper);
-                var okResult = service.GetById(1);
-                var badResult = service.GetById(10000); 
+                var okResult = service.GetById(1, "1");
+                var badResult = service.GetById(10000, "1"); 
             //Assert
                 Assert.Null(badResult);
                 Assert.IsType<DomainModelDto>(okResult);
@@ -63,15 +66,17 @@ namespace Services.Tests
             //Act
             using (var context = new DataContext(options))
             {
-                context.Domains.AddRange(SeedEntitiesDomainModels());
+                context.Domains.AddRange(SeedFakeData.SeedEntitiesDomainModels());
+                context.Users.AddRange(SeedFakeData.SeedEntitiesUsersModels());
+
                 context.SaveChanges();
             }
             
             using (var context = new DataContext(options))
             {
                 var service = new DomainService(context, mapper);
-                var result = service.GetAllNotDeleted();
-            //Assert
+                var result = service.GetAllNotDeleted("1"); //user that has id 1. This comes from controller in production.
+                //Assert
                 Assert.Equal(2, result.Count());
                 Assert.IsType<List<DomainModelDto>>(result);
                 foreach (var domainModel in result)
@@ -81,7 +86,7 @@ namespace Services.Tests
             }
         }
         [Fact]
-        public void TestCreate()
+        public async void TestCreate()
         {
             //Arrange
             var options = new DbContextOptionsBuilder<DataContext>() //instead of mocking we use inMemoryDatabase.
@@ -102,13 +107,19 @@ namespace Services.Tests
             //Act
             using (var context = new DataContext(options))
             {
-                var userId = "2";
+                context.Domains.AddRange(SeedFakeData.SeedEntitiesDomainModels());
+                context.Users.AddRange(SeedFakeData.SeedEntitiesUsersModels());
+
+                context.SaveChanges();
+            }
+            using (var context = new DataContext(options))
+            {
                 var service = new DomainService(context, mapper);
-                var result = service.Create(testModel, userId);
+                var result = await service.Create(testModel, "1");
                 Assert.Equal(default, result.Parameters); //check for some un-set property if it becomes default after Create service
-                Assert.False(result.Deleted);
+                Assert.False(result.Deleted); 
                 Assert.IsType<DomainModelDto>(result);
-                Assert.Equal(1, context.Domains.Count());
+                Assert.Equal(5, context.Domains.Count());
             }
         }
 
@@ -126,7 +137,8 @@ namespace Services.Tests
             var mapper = config.CreateMapper(); // according to some people this is better than mocking automapper.
             using (var context = new DataContext(options))
             {
-                context.Domains.AddRange(SeedEntitiesDomainModels());
+                context.Domains.AddRange(SeedFakeData.SeedEntitiesDomainModels());
+                context.Users.AddRange(SeedFakeData.SeedEntitiesUsersModels());
                 context.SaveChanges();
             }
 
@@ -140,7 +152,7 @@ namespace Services.Tests
             using (var context = new DataContext(options))
             {
                 var service = new DomainService(context, mapper);
-                var result = service.Update(1, testModel);
+                var result = service.Update(1, testModel, "1"); 
 
                 //Assert
                 Assert.Equal(4,context.Domains.Count());
@@ -163,7 +175,8 @@ namespace Services.Tests
             var mapper = config.CreateMapper(); // according to some people this is better than mocking automapper.
             using (var context = new DataContext(options))
             {
-                context.Domains.AddRange(SeedEntitiesDomainModels());
+                context.Domains.AddRange(SeedFakeData.SeedEntitiesDomainModels());
+                context.Users.AddRange(SeedFakeData.SeedEntitiesUsersModels());
                 context.SaveChanges();
             }
 
@@ -171,21 +184,43 @@ namespace Services.Tests
             using (var context = new DataContext(options))
             {
                 var service = new DomainService(context, mapper);
-                var result = service.PseudoDelete(4);
+                var resultDeleted = service.PseudoDelete(2, "1"); //same teamKey
+                var resultWrongTeam = service.PseudoDelete(4, "1"); //different teamKey
                 //Assert
                 Assert.Equal(4, context.Domains.Count()); //same number as before. It's pseudo delete for a reason.
-                Assert.True(context.Domains.Find(4).Deleted);
+                Assert.True(context.Domains.Find(2).Deleted);
+                Assert.False(context.Domains.Find(4).Deleted);
             }
         }
 
-        private IEnumerable<DomainModel> SeedEntitiesDomainModels()
+        internal static class SeedFakeData
         {
-            var list = new List<DomainModel>();
-            list.Add(new DomainModel { Id = 1, Service_Name = "service1", Url = "http://www.festo.com", Service_Type = ServiceType.ServiceRest, Method = RequestMethod.Get, Basic_Auth = false, Auth_Password = null, Auth_User = null, Notification_Email = "aadas1@aaa.com", Interval_Ms = 30000, Parameters = null, Active = true, Deleted = false, Created_By = 0, Modified_By = 0, Date_Created = DateTime.Now, Date_Modified = DateTime.Now, Last_Fail = DateTime.Now });
-            list.Add(new DomainModel { Id = 2, Service_Name = "service2", Url = "http://www.google.com", Service_Type = ServiceType.ServiceSoap, Method = RequestMethod.Get, Basic_Auth = false, Auth_Password = null, Auth_User = null, Notification_Email = "aadas2@aaa.com", Interval_Ms = 60000, Parameters = "random parameters", Active = true, Deleted = false, Created_By = 0, Modified_By = 0, Date_Created = DateTime.Now, Date_Modified = DateTime.Now, Last_Fail = DateTime.Now });
-            list.Add(new DomainModel { Id = 3, Service_Name = "service3", Url = "http://www.kitm.lt", Service_Type = ServiceType.ServiceRest, Method = RequestMethod.Get, Basic_Auth = true, Auth_Password = "password123", Auth_User = "username", Notification_Email = "aadas3@aaa.com", Interval_Ms = 70000, Parameters = "random parameters", Active = false, Deleted = true, Created_By = 0, Modified_By = 0, Date_Created = DateTime.Now, Date_Modified = DateTime.Now, Last_Fail = DateTime.Now });
-            list.Add(new DomainModel { Id = 4, Service_Name = "service4", Url = "http://www.facebook.com", Service_Type = ServiceType.ServiceRest, Method = RequestMethod.Post, Basic_Auth = false, Auth_Password = null, Auth_User = null, Notification_Email = "aada4@aaa.com", Interval_Ms = 55000, Parameters = "random parameters", Active = true, Deleted = true, Created_By = 0, Modified_By = 0, Date_Created = DateTime.Now, Date_Modified = DateTime.Now, Last_Fail = DateTime.Now });
-            return list;
+            private static readonly Guid FirstTeamKey = Guid.NewGuid();
+            private static readonly Guid SecondTeamKey = Guid.NewGuid();
+
+            //creates fake users for database
+            internal static IEnumerable<User> SeedEntitiesUsersModels()
+            {
+                var list = new List<User>
+                {
+                    new User() { Id = 1, Team_Key = FirstTeamKey },
+                    new User() { Id = 2, Team_Key = FirstTeamKey },
+                    new User() { Id = 3, Team_Key = SecondTeamKey }
+                };
+                return list;
+            }
+            //creates fake domains for database
+            internal static IEnumerable<DomainModel> SeedEntitiesDomainModels()
+            {
+                var list = new List<DomainModel>
+                {
+                    new DomainModel { Id = 1, Service_Name = "service1", Url = "http://www.festo.com", Service_Type = ServiceType.ServiceRest, Method = RequestMethod.Get, Basic_Auth = false, Auth_Password = null, Auth_User = null, Notification_Email = "aadas1@aaa.com", Interval_Ms = 30000, Parameters = null, Active = true, Deleted = false, Created_By = 0, Modified_By = 0, Date_Created = DateTime.Now, Date_Modified = DateTime.Now, Last_Fail = DateTime.Now, Team_Key = FirstTeamKey },
+                    new DomainModel { Id = 2, Service_Name = "service2", Url = "http://www.google.com", Service_Type = ServiceType.ServiceSoap, Method = RequestMethod.Get, Basic_Auth = false, Auth_Password = null, Auth_User = null, Notification_Email = "aadas2@aaa.com", Interval_Ms = 60000, Parameters = "random parameters", Active = true, Deleted = false, Created_By = 0, Modified_By = 0, Date_Created = DateTime.Now, Date_Modified = DateTime.Now, Last_Fail = DateTime.Now, Team_Key = FirstTeamKey },
+                    new DomainModel { Id = 3, Service_Name = "service3", Url = "http://www.kitm.lt", Service_Type = ServiceType.ServiceRest, Method = RequestMethod.Get, Basic_Auth = true, Auth_Password = "password123", Auth_User = "username", Notification_Email = "aadas3@aaa.com", Interval_Ms = 70000, Parameters = "random parameters", Active = false, Deleted = true, Created_By = 0, Modified_By = 0, Date_Created = DateTime.Now, Date_Modified = DateTime.Now, Last_Fail = DateTime.Now, Team_Key = SecondTeamKey },
+                    new DomainModel { Id = 4, Service_Name = "service4", Url = "http://www.facebook.com", Service_Type = ServiceType.ServiceRest, Method = RequestMethod.Post, Basic_Auth = false, Auth_Password = null, Auth_User = null, Notification_Email = "aada4@aaa.com", Interval_Ms = 55000, Parameters = "random parameters", Active = true, Deleted = false, Created_By = 0, Modified_By = 0, Date_Created = DateTime.Now, Date_Modified = DateTime.Now, Last_Fail = DateTime.Now, Team_Key = SecondTeamKey }
+                };
+                return list;
+            }
         }
     }
 }

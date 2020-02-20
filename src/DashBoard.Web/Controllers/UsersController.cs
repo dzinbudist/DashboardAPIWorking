@@ -17,7 +17,7 @@ namespace DashBoard.Web.Controllers
         private readonly IUserService _userService;
         private readonly ITokenService _tokenService;
         private readonly AppSettings _appSettings;
-        public string LoggedInUser => User.Identity.Name; //this gets current user ID
+        public string LoggedInUser => User.Identity.Name; //this gets current user ID. It doesn't work in controller. We have to pass it from here.
 
         public UsersController(
             IUserService userService,
@@ -92,7 +92,8 @@ namespace DashBoard.Web.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var usersDto = _userService.GetAll();
+            var userId = LoggedInUser;
+            var usersDto = _userService.GetAll(userId);
             return Ok(usersDto);
         }
 
@@ -100,7 +101,6 @@ namespace DashBoard.Web.Controllers
         public IActionResult GetById(int id) //this might be missing not found actionResult.
         {
             var userDto = _userService.GetById(id);
-            
             return Ok(userDto);
         }
 
@@ -120,29 +120,13 @@ namespace DashBoard.Web.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
-        [Authorize(Roles = Role.Admin)]
-        [HttpPut("admin/{id}")]
-        public IActionResult UpdateByAdmin(int id, [FromBody]UpdateModelDto model)
-        {
-            try
-            {
-                var userId = LoggedInUser;
-                // update user 
-                _userService.Update(id, model, userId);
-                return Ok();
-            }
-            catch (AppException ex)
-            {
-                // return error message if there was an exception
-                return BadRequest(new { message = ex.Message });
-            }
-        }
 
         [Authorize(Roles = Role.Admin)]
         [HttpDelete("{id}")] //this might be missing not found actionResult.
         public IActionResult Delete(int id)
         {
-            _userService.Delete(id);
+            var userId = LoggedInUser;
+            _userService.Delete(id, userId);
             return Ok();
         }
     }

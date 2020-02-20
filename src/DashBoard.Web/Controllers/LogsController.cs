@@ -12,6 +12,8 @@ namespace DashBoard.Web.Controllers
     public class LogsController : ControllerBase
     {
         private readonly ILogsService _logsService;
+        public string LoggedInUser => User.Identity.Name; //this gets current user ID. We need to pass it to services in parameters. This is not ideal, couldn't find a way to get user in controller.
+
 
         public LogsController(ILogsService logsService)
         {
@@ -24,7 +26,8 @@ namespace DashBoard.Web.Controllers
        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetAllLogs()
         {
-            var result = _logsService.GetAllLogs();
+            var userId = LoggedInUser;
+            var result = _logsService.GetAllLogs(userId);
             if (result == null)
             {
                 return NotFound(); //NoContent() is also an option here.
@@ -37,7 +40,8 @@ namespace DashBoard.Web.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetLogsByDomain(int id)
         {
-            var result = _logsService.GetLogsByDomainId(id);
+            var userId = LoggedInUser;
+            var result = _logsService.GetLogsByDomainId(id, userId);
             if (result == null)
             {
                 return NotFound(); //NoContent() is also an option here.
