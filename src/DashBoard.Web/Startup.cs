@@ -66,8 +66,8 @@ namespace DashBoard.Web
                     OnTokenValidated = context =>
                     {
                         var userService = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
-                        var userId = int.Parse(context.Principal.Identity.Name);
-                        var user = userService.GetById(userId);
+                        var userId = int.Parse(context.Principal.Identity.Name);                        
+                        var user = userService.GetById(userId, userId.ToString());
                         if (user == null)
                         {
                             // return unauthorized if user no longer exists

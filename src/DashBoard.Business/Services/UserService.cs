@@ -14,7 +14,7 @@ namespace DashBoard.Business.Services
     {
         User Authenticate(string username, string password);
         IEnumerable<UserModelDto> GetAll(string userId);
-        UserModelDto GetById(int id);
+        UserModelDto GetById(int id, string userId);
         User Create(RegisterModelDto model, string password, string userId);
         void Update(int id, UpdateModelDto model, string userId);
         void Delete(int id, string userId);
@@ -61,9 +61,17 @@ namespace DashBoard.Business.Services
             return usersDto;
         }
 
-        public UserModelDto GetById(int id)
+        public UserModelDto GetById(int id, string userId)
         {
-            var user = _context.Users.Find(id); //you can find other team IDs. I didn't change it here, because you need to reconfig JWT token.
+            var userMakingThisRequest = _context.Users.First(c => c.Id == Convert.ToInt32(userId));
+            var teamKey = userMakingThisRequest.Team_Key;
+            var user = _context.Users.FirstOrDefault(c => c.Id == id && c.Team_Key == teamKey);  //you can find other team IDs. I didn't change it here, because you need to reconfig JWT token.
+            
+            if (user == null)
+            {
+                return null;
+            }
+
             var userDto = _mapper.Map<UserModelDto>(user);
             return userDto;
         }

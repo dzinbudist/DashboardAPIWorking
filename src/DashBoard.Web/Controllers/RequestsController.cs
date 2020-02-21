@@ -13,6 +13,7 @@ namespace DashBoard.Web.Controllers
     public class RequestsController : ControllerBase
     {
         private readonly IRequestService _requestService;
+        public string LoggedInUser => User.Identity.Name; //this gets current user ID
         public RequestsController(IRequestService requestService)
         {
             _requestService = requestService;
@@ -21,7 +22,7 @@ namespace DashBoard.Web.Controllers
         [HttpGet("getservice/{id}")]
         public async Task<ActionResult<object>> GetService(int id)
         {
-            var response = await _requestService.GetService(id, null);
+            var response = await _requestService.GetService(id, null, LoggedInUser);
             if (response == null)
             {
                 return NotFound(new { message = $"Problem reaching service with id {id}" });
@@ -32,7 +33,7 @@ namespace DashBoard.Web.Controllers
         [HttpPost("testservice")]
         public async Task<ActionResult<object>> TestService(DomainForCreationDto domain)
         {
-            var response = await _requestService.GetService(-555, domain);
+            var response = await _requestService.GetService(-555, domain, LoggedInUser);
             if (response == null)
             {
                 return NotFound(new { message = $"Problem reaching portal" });

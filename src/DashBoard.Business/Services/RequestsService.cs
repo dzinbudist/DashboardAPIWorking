@@ -9,12 +9,13 @@ using DashBoard.Data.Enums;
 using DashBoard.Data.Entities;
 using System.Net.Http.Headers;
 using DashBoard.Business.DTOs.Domains;
+using System.Linq;
 
 namespace DashBoard.Business.Services
 {
     public interface IRequestService
     {
-        Task<object> GetService(int id, DomainForCreationDto domain);
+        Task<object> GetService(int id, DomainForCreationDto domain, string userId);
     }
     public class RequestsService: IRequestService
     {
@@ -25,16 +26,18 @@ namespace DashBoard.Business.Services
         }
 
 
-        public async Task<object> GetService(int id, DomainForCreationDto domain)
+        public async Task<object> GetService(int id, DomainForCreationDto domain, string userId)
         {
             DomainModel domainModel;
 
             if (domain == null)
             {
-                domainModel = _context.Domains.Find(id);
+                var user = await _context.Users.FindAsync(Convert.ToInt32(userId));
+                var teamKey = user.Team_Key;
+                domainModel = _context.Domains.FirstOrDefault(x => x.Id == id && x.Deleted == false && x.Team_Key == teamKey);
             }
             else
-            {
+            {    
                 domainModel = GetDomainModel(domain);
             }
 
@@ -101,11 +104,20 @@ namespace DashBoard.Business.Services
                 var response = await client.SendAsync(request);
                 sw.Stop();
 
-                SaveLog(domainModel, response);
+                if (domainModel.Id != -555 && domainModel.Service_Name != "ModelForTesting")
+                {
+                    SaveLog(domainModel, response);
+                }
+
                 return GetResponseObject(domainModel, sw, response);
             }
             catch
             {
+                if (domainModel.Id != -555 && domainModel.Service_Name != "ModelForTesting")
+                {
+                    SaveLogFailed(domainModel);
+                }
+                
                 return GetFailObject(domainModel);
             }
         }
@@ -145,6 +157,20 @@ namespace DashBoard.Business.Services
                 _context.Logs.Add(logEntry);
                 _context.SaveChanges();
             }
+        }
+
+        private void SaveLogFailed(DomainModel domainModel)
+        {
+            domainModel.Last_Fail = DateTime.Now;
+            var logEntry = new LogModel
+            {
+                Domain_Id = domainModel.Id,
+                Log_Date = DateTime.Now,
+                Error_Text = "503",
+                Team_Key = domainModel.Team_Key
+            };
+            _context.Logs.Add(logEntry);
+            _context.SaveChanges();
         }
 
         private static DomainModel GetDomainModel(DomainForCreationDto domain)
