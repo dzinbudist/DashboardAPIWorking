@@ -67,7 +67,7 @@ namespace DashBoard.Web
                     {
                         var userService = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
                         var userId = int.Parse(context.Principal.Identity.Name);                        
-                        var user = userService.GetById(userId, userId.ToString());
+                        var user = userService.GetById(userId, userId.ToString()); //update
                         if (user == null)
                         {
                             // return unauthorized if user no longer exists
