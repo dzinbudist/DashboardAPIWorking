@@ -207,7 +207,8 @@ namespace DashBoard.Business.Services
             // update role if provided and check if user is admin.
             if (userMakingThisUpdate.Role.Equals("Admin") && model.Role != user.Role)
             {
-                if (model.Role != "Admin" || model.Role != "User")
+
+                if (model.Role != "Admin" && model.Role != "User")
                 {
                     throw new AppException("No such role: " + model.Role);
                 }
