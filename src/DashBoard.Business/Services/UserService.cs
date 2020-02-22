@@ -169,6 +169,16 @@ namespace DashBoard.Business.Services
                 user.Username = modelWithNewParams.Username;
             }
 
+            // update email if it has changed
+            if (!string.IsNullOrWhiteSpace(modelWithNewParams.UserEmail) && modelWithNewParams.UserEmail != user.UserEmail)
+            {
+                // throw error if the new email is already taken
+                if (_context.Users.Any(x => x.UserEmail == modelWithNewParams.UserEmail))
+                    throw new AppException("Email " + modelWithNewParams.UserEmail + " is already taken");
+
+                user.UserEmail = modelWithNewParams.UserEmail;
+            }
+
             // update user properties if provided
             if (!string.IsNullOrWhiteSpace(modelWithNewParams.FirstName))
                 user.FirstName = modelWithNewParams.FirstName;
@@ -176,7 +186,14 @@ namespace DashBoard.Business.Services
             if (!string.IsNullOrWhiteSpace(modelWithNewParams.LastName))
                 user.LastName = modelWithNewParams.LastName;
 
-            //this is missing email update !!
+            if (!string.IsNullOrWhiteSpace(password))
+            {
+                byte[] passwordHash, passwordSalt;
+                CreatePasswordHash(password, out passwordHash, out passwordSalt);
+
+                user.PasswordHash = passwordHash;
+                user.PasswordSalt = passwordSalt;
+            }
 
             // update password if provided
             if (!string.IsNullOrWhiteSpace(password))

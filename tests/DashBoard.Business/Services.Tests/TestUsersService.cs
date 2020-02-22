@@ -128,7 +128,7 @@ namespace Services.Tests
                 context.Users.AddRange(SeedFakeData.SeedEntitiesUsersModels());
                 context.SaveChanges();
                 var service = new UserService(context, mapper);
-                var getAllResult = service.GetById(2);
+                var getAllResult = service.GetById(2, "1");
                 //Assert
                 Assert.IsType<UserModelDto>(getAllResult);
                 Assert.Equal(2, getAllResult.Id);

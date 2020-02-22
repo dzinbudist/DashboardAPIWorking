@@ -41,7 +41,7 @@ namespace Services.Tests
                 var service = new LogsService(context, mapper);
                 var result = service.GetAllLogs("1"); 
                 //Assert
-                Assert.Equal(1, result.Count()); 
+                Assert.Single(result); 
                 Assert.IsType<List<LogModelDto>>(result);
             }
         }
