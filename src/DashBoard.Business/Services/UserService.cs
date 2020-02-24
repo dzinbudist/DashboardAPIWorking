@@ -17,7 +17,7 @@ namespace DashBoard.Business.Services
         UserModelDto GetById(int id, string userId);
         User Create(RegisterModelDto model, string password, string userId);
         void Update(int id, UpdateModelDto model, string userId);
-        bool Delete(int id, string userId);
+        string Delete(int id, string userId);
     }
 
     public class UserService : IUserService
@@ -242,19 +242,28 @@ namespace DashBoard.Business.Services
             _context.SaveChanges();
         }
 
-        public bool Delete(int id, string userId)
+        public string Delete(int id, string userId)
         {
             var userMakingThisDelete = _context.Users.First(c => c.Id == Convert.ToInt32(userId));
             var teamKey = userMakingThisDelete.Team_Key;
             //check if there is such a user in team with such Id.
             var user = _context.Users.FirstOrDefault(x => x.Id == id && x.Team_Key == teamKey);
+
+
             if (user != null)
             {
-                _context.Users.Remove(user);
-                _context.SaveChanges();
-                return true;
+                if (userMakingThisDelete.Id == user.Id)
+                {
+                    return "notAllowed";
+                }
+                else
+                {
+                    _context.Users.Remove(user);
+                    _context.SaveChanges();
+                    return "ok";
+                }
             }
-            return false;
+            return "notFound";
         }
 
         // private helper methods

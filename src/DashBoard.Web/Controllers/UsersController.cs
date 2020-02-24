@@ -138,15 +138,20 @@ namespace DashBoard.Web.Controllers
             var userId = LoggedInUser;
             var result = _userService.Delete(id, userId);
 
-            if (result)
+            if (result == "ok")
             {
                 return Ok();
             }
-            else
+            else if (result == "notFound")
             {
                 return NotFound();
             }
-            
+            else if (result == "notFound")
+            {
+                return StatusCode(403);
+            }
+
+            return NotFound();
         }
     }
 }
