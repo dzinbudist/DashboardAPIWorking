@@ -102,7 +102,16 @@ namespace DashBoard.Web.Controllers
         {
             var userId = LoggedInUser;
             var userDto = _userService.GetById(id, userId);
-            return Ok(userDto);
+
+            if (userDto != null)
+            {
+                return Ok(userDto);
+            }
+            else
+            {
+                return NotFound();
+            }
+            
         }
 
         [HttpPut("{id}")]
@@ -127,8 +136,22 @@ namespace DashBoard.Web.Controllers
         public IActionResult Delete(int id)
         {
             var userId = LoggedInUser;
-            _userService.Delete(id, userId);
-            return Ok();
+            var result = _userService.Delete(id, userId);
+
+            if (result == "ok")
+            {
+                return Ok();
+            }
+            else if (result == "notFound")
+            {
+                return NotFound();
+            }
+            else if (result == "notFound")
+            {
+                return StatusCode(403);
+            }
+
+            return NotFound();
         }
     }
 }

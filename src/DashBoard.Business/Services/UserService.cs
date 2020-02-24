@@ -17,7 +17,7 @@ namespace DashBoard.Business.Services
         UserModelDto GetById(int id, string userId);
         User Create(RegisterModelDto model, string password, string userId);
         void Update(int id, UpdateModelDto model, string userId);
-        void Delete(int id, string userId);
+        string Delete(int id, string userId);
     }
 
     public class UserService : IUserService
@@ -205,15 +205,36 @@ namespace DashBoard.Business.Services
                 user.PasswordSalt = passwordSalt;
             }
             // update role if provided and check if user is admin.
+
+            if (userMakingThisUpdate.Id == user.Id)
+            {
+                if (userMakingThisUpdate.Role == Role.Admin)
+                {
+                    user.Role = Role.Admin;
+                }
+            }
+
             if (userMakingThisUpdate.Role.Equals("Admin") && model.Role != user.Role)
             {
-
                 if (model.Role != "Admin" && model.Role != "User")
                 {
                     throw new AppException("No such role: " + model.Role);
                 }
-                user.Role = model.Role;
+                else if (userMakingThisUpdate.Id == user.Id)
+                {
+                    if (userMakingThisUpdate.Role == Role.Admin)
+                    {
+                        user.Role = Role.Admin;
+                    }
+                }
+                else
+                {
+                    user.Role = model.Role;
+                }                
             }
+            
+
+
             user.Date_Modified = DateTime.Now;
             user.Modified_By = userMakingThisUpdate.Id;
 
@@ -221,17 +242,28 @@ namespace DashBoard.Business.Services
             _context.SaveChanges();
         }
 
-        public void Delete(int id, string userId)
+        public string Delete(int id, string userId)
         {
             var userMakingThisDelete = _context.Users.First(c => c.Id == Convert.ToInt32(userId));
             var teamKey = userMakingThisDelete.Team_Key;
             //check if there is such a user in team with such Id.
             var user = _context.Users.FirstOrDefault(x => x.Id == id && x.Team_Key == teamKey);
+
+
             if (user != null)
             {
-                _context.Users.Remove(user);
-                _context.SaveChanges();
+                if (userMakingThisDelete.Id == user.Id)
+                {
+                    return "notAllowed";
+                }
+                else
+                {
+                    _context.Users.Remove(user);
+                    _context.SaveChanges();
+                    return "ok";
+                }
             }
+            return "notFound";
         }
 
         // private helper methods
