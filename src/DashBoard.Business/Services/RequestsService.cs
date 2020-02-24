@@ -20,9 +20,11 @@ namespace DashBoard.Business.Services
     public class RequestsService: IRequestService
     {
         private readonly DataContext _context;
-        public RequestsService(DataContext context)
+        private readonly IMailService _mailService;
+        public RequestsService(DataContext context, IMailService mailService)
         {
             _context = context;
+            _mailService = mailService;
         }
 
 

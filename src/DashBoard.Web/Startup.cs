@@ -93,6 +93,7 @@ namespace DashBoard.Web
             services.AddScoped<ILogsService, LogsService>();
             services.AddScoped<IRequestService, RequestsService>();
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IMailService, MailService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

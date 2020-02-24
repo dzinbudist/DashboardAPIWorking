@@ -17,7 +17,7 @@ namespace DashBoard.Business.Services
         UserModelDto GetById(int id, string userId);
         User Create(RegisterModelDto model, string password, string userId);
         void Update(int id, UpdateModelDto model, string userId);
-        void Delete(int id, string userId);
+        bool Delete(int id, string userId);
     }
 
     public class UserService : IUserService
@@ -205,15 +205,36 @@ namespace DashBoard.Business.Services
                 user.PasswordSalt = passwordSalt;
             }
             // update role if provided and check if user is admin.
+
+            if (userMakingThisUpdate.Id == user.Id)
+            {
+                if (userMakingThisUpdate.Role == Role.Admin)
+                {
+                    user.Role = Role.Admin;
+                }
+            }
+
             if (userMakingThisUpdate.Role.Equals("Admin") && model.Role != user.Role)
             {
-
                 if (model.Role != "Admin" && model.Role != "User")
                 {
                     throw new AppException("No such role: " + model.Role);
                 }
-                user.Role = model.Role;
+                else if (userMakingThisUpdate.Id == user.Id)
+                {
+                    if (userMakingThisUpdate.Role == Role.Admin)
+                    {
+                        user.Role = Role.Admin;
+                    }
+                }
+                else
+                {
+                    user.Role = model.Role;
+                }                
             }
+            
+
+
             user.Date_Modified = DateTime.Now;
             user.Modified_By = userMakingThisUpdate.Id;
 
@@ -221,7 +242,7 @@ namespace DashBoard.Business.Services
             _context.SaveChanges();
         }
 
-        public void Delete(int id, string userId)
+        public bool Delete(int id, string userId)
         {
             var userMakingThisDelete = _context.Users.First(c => c.Id == Convert.ToInt32(userId));
             var teamKey = userMakingThisDelete.Team_Key;
@@ -231,7 +252,9 @@ namespace DashBoard.Business.Services
             {
                 _context.Users.Remove(user);
                 _context.SaveChanges();
+                return true;
             }
+            return false;
         }
 
         // private helper methods
