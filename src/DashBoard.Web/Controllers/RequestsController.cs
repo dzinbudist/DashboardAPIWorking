@@ -31,7 +31,7 @@ namespace DashBoard.Web.Controllers
         }
 
         [HttpPost("testservice")]
-        public async Task<ActionResult<object>> TestService(DomainForCreationDto domain)
+        public async Task<ActionResult<object>> TestService(DomainForTestDto domain)
         {
             var response = await _requestService.GetService(-555, domain, LoggedInUser);
             if (response == null)

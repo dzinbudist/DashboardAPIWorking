@@ -15,7 +15,7 @@ namespace DashBoard.Business.Services
 {
     public interface IRequestService
     {
-        Task<object> GetService(int id, DomainForCreationDto domain, string userId);
+        Task<object> GetService(int id, DomainForTestDto domain, string userId);
     }
     public class RequestsService: IRequestService
     {
@@ -27,8 +27,7 @@ namespace DashBoard.Business.Services
             _mailService = mailService;
         }
 
-
-        public async Task<object> GetService(int id, DomainForCreationDto domain, string userId)
+        public async Task<object> GetService(int id, DomainForTestDto domain, string userId)
         {
             DomainModel domainModel;
 
@@ -75,6 +74,7 @@ namespace DashBoard.Business.Services
 
         async Task<object> DoRequest(HttpClient client, HttpRequestMessage request, DomainModel domainModel, string mediaType)
         {
+            //_mailService.SendEmail(domainModel.Id);
             try
             {
                 if (domainModel.Basic_Auth)
@@ -108,6 +108,7 @@ namespace DashBoard.Business.Services
 
                 if (domainModel.Id != -555 && domainModel.Service_Name != "ModelForTesting")
                 {
+                    domainModel.Last_Fail = DateTime.Now;
                     SaveLog(domainModel, response);
                 }
 
@@ -146,8 +147,7 @@ namespace DashBoard.Business.Services
         private void SaveLog(DomainModel domainModel, HttpResponseMessage response)
         {
             if (!response.IsSuccessStatusCode)
-            {
-                domainModel.Last_Fail = DateTime.Now;
+            {                
                 // new LogModel entity added to Database
                 var logEntry = new LogModel
                 {
@@ -158,6 +158,8 @@ namespace DashBoard.Business.Services
                 };
                 _context.Logs.Add(logEntry);
                 _context.SaveChanges();
+
+                //_mailService.SendEmail(domainModel.Id);
             }
         }
 
@@ -173,9 +175,11 @@ namespace DashBoard.Business.Services
             };
             _context.Logs.Add(logEntry);
             _context.SaveChanges();
+
+            _mailService.SendEmail(domainModel.Id);
         }
 
-        private static DomainModel GetDomainModel(DomainForCreationDto domain)
+        private static DomainModel GetDomainModel(DomainForTestDto domain)
         {
             DomainModel modelForTest = new DomainModel
             {
@@ -184,7 +188,7 @@ namespace DashBoard.Business.Services
                 Service_Type = domain.Service_Type,
                 Url = domain.Url,
                 Method = domain.Method,
-                Notification_Email = domain.Notification_Email,
+                Notification_Email = "test@fortest",
                 Basic_Auth = domain.Basic_Auth,
                 Auth_User = domain.Auth_User,
                 Auth_Password = domain.Auth_Password,
