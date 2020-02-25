@@ -21,6 +21,7 @@ namespace DashBoard.Business.Services
     {
         private readonly DataContext _context;
         private readonly IMailService _mailService;
+        private Guid teamKey;
         public RequestsService(DataContext context, IMailService mailService)
         {
             _context = context;
@@ -34,7 +35,7 @@ namespace DashBoard.Business.Services
             if (domain == null)
             {
                 var user = await _context.Users.FindAsync(Convert.ToInt32(userId));
-                var teamKey = user.Team_Key;
+                teamKey = user.Team_Key;
                 domainModel = _context.Domains.FirstOrDefault(x => x.Id == id && x.Deleted == false && x.Team_Key == teamKey);
             }
             else
@@ -74,7 +75,7 @@ namespace DashBoard.Business.Services
 
         async Task<object> DoRequest(HttpClient client, HttpRequestMessage request, DomainModel domainModel, string mediaType)
         {
-            //_mailService.SendEmail(domainModel.Id);
+            //_mailService.SendEmail(domainModel, teamKey);
             try
             {
                 if (domainModel.Basic_Auth)
@@ -159,7 +160,7 @@ namespace DashBoard.Business.Services
                 _context.Logs.Add(logEntry);
                 _context.SaveChanges();
 
-                //_mailService.SendEmail(domainModel.Id);
+                //_mailService.SendEmail(domainModel, teamKey);
             }
         }
 
@@ -175,8 +176,6 @@ namespace DashBoard.Business.Services
             };
             _context.Logs.Add(logEntry);
             _context.SaveChanges();
-
-            _mailService.SendEmail(domainModel.Id);
         }
 
         private static DomainModel GetDomainModel(DomainForTestDto domain)

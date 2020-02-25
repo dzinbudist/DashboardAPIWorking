@@ -78,8 +78,15 @@ namespace DashBoard.Web.Controllers
                 var userId = LoggedInUser;
                 model.CreatedByAdmin = true;
                 // create user
-                _userService.Create(model, model.Password, userId);
-                return Ok();
+                var user = _userService.Create(model, model.Password, userId);
+                return Ok(new
+                {
+                    Id = user.Id,
+                    Username = user.Username,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Role = user.Role
+                });
             }
             catch (AppException ex)
             {
