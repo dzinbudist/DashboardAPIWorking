@@ -60,8 +60,8 @@ namespace DashBoard.Web.Controllers
                 var userId = LoggedInUser; //this will be null, since method is Anonymous.
                 model.CreatedByAdmin = false;
                 // create user
-                _userService.Create(model, model.Password, userId);
-                return Ok();
+                var user = _userService.Create(model, model.Password, userId);
+                return Ok(new {id = user.Id, username = user.Username});
             }
             catch (AppException ex)
             {
