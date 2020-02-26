@@ -11,7 +11,7 @@ namespace DashBoard.Business.DTOs.Users
         public string Username { get; set; }
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 10)]
-        [RegularExpression("^(?=\\S*[a-z])(?=\\S*[A-Z])(?=\\S*\\d)(?=\\S*[!\"#$%&'()*+,./:;<=>?@[\\\\\\]^_`{|}~-])\\S{10,128}$", ErrorMessage = "Passwords must be 10 to 128 characters long and contain: upper case (A-Z), lower case (a-z), number (0-9) and special character (e.g. !@#$%^&*)")]
+        [RegularExpression("^(?=\\S*[a-z])(?=\\S*[A-Z])(?=\\S*\\d)(?=\\S*[\\W_])\\S{10,128}$", ErrorMessage = "Passwords must be 10 to 128 characters long and contain: upper case (A-Z), lower case (a-z), number (0-9) and special character (e.g. !@#$%^&*)")]
         public string Password { get; set; }
 
         [DataType(DataType.Password)]

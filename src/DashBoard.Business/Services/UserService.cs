@@ -26,7 +26,8 @@ namespace DashBoard.Business.Services
         private readonly IMapper _mapper;
 
         private readonly string validPasswordPattern =
-            "^(?=\\S*[a-z])(?=\\S*[A-Z])(?=\\S*\\d)(?=\\S*[!\"#$%&'()*+,./:;<=>?@[\\\\\\]^_`{|}~-])\\S{10,128}$";
+            "^(?=\\S*[a-z])(?=\\S*[A-Z])(?=\\S*\\d)(?=\\S*[\\W_])\\S{10,128}$";
+            //senesnis regex: "^(?=\\S*[a-z])(?=\\S*[A-Z])(?=\\S*\\d)(?=\\S*[!\"#$%&'()*+,./:;<=>?@[\\\\\\]^_`{|}~-])\\S{10,128}$";
         public UserService(DataContext context, IMapper mapper)
         {
             _mapper = mapper;
