@@ -75,17 +75,15 @@ namespace DashBoard.Business.Services
 
         async Task<object> DoRequest(HttpClient client, HttpRequestMessage request, DomainModel domainModel, string mediaType)
         {
-            //_mailService.SendEmail(domainModel, teamKey);
             try
             {
                 if (domainModel.Basic_Auth)
                 {
-                    Random random = new Random(); // laikinas
                     client.DefaultRequestHeaders.Authorization =
                         new AuthenticationHeaderValue(
                             "Basic", Convert.ToBase64String(
                                 System.Text.ASCIIEncoding.ASCII.GetBytes(
-                                   $"{domainModel.Auth_User}:{domainModel.Auth_Password}"))); //+random.Next(10000)
+                                   $"{domainModel.Auth_User}:{domainModel.Auth_Password}")));
 
                     if (domainModel.Parameters != null && request.Method != HttpMethod.Get)
                     {
@@ -110,7 +108,10 @@ namespace DashBoard.Business.Services
                 if (domainModel.Id != -555 && domainModel.Service_Name != "ModelForTesting")
                 {
                     domainModel.Last_Fail = DateTime.Now;
-                    SaveLog(domainModel, response);
+                    await SaveLog(domainModel, response);
+                    _context.Domains.Update(domainModel);
+                    _context.SaveChanges();
+
                 }
 
                 return GetResponseObject(domainModel, sw, response);
@@ -119,7 +120,10 @@ namespace DashBoard.Business.Services
             {
                 if (domainModel.Id != -555 && domainModel.Service_Name != "ModelForTesting")
                 {
+                    domainModel.Last_Fail = DateTime.Now;
                     await SaveLogFailed(domainModel);
+                    _context.Domains.Update(domainModel);
+                    _context.SaveChanges();
                 }
                 
                 return GetFailObject(domainModel);
@@ -145,7 +149,7 @@ namespace DashBoard.Business.Services
             };
         }
 
-        private async void SaveLog(DomainModel domainModel, HttpResponseMessage response)
+        private async Task<bool> SaveLog(DomainModel domainModel, HttpResponseMessage response)
         {
             if (!response.IsSuccessStatusCode)
             {                
@@ -159,8 +163,9 @@ namespace DashBoard.Business.Services
                 };
                 _context.Logs.Add(logEntry);
                 _context.SaveChanges();
-                await _mailService.SendEmail(domainModel, teamKey);
+                return await _mailService.SendEmail(domainModel, teamKey);
             }
+            return false;
         }
 
         private async Task<bool> SaveLogFailed(DomainModel domainModel)
