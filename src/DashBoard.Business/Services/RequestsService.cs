@@ -119,7 +119,7 @@ namespace DashBoard.Business.Services
             {
                 if (domainModel.Id != -555 && domainModel.Service_Name != "ModelForTesting")
                 {
-                    SaveLogFailed(domainModel);
+                    await SaveLogFailed(domainModel);
                 }
                 
                 return GetFailObject(domainModel);
@@ -145,7 +145,7 @@ namespace DashBoard.Business.Services
             };
         }
 
-        private void SaveLog(DomainModel domainModel, HttpResponseMessage response)
+        private async void SaveLog(DomainModel domainModel, HttpResponseMessage response)
         {
             if (!response.IsSuccessStatusCode)
             {                
@@ -159,12 +159,11 @@ namespace DashBoard.Business.Services
                 };
                 _context.Logs.Add(logEntry);
                 _context.SaveChanges();
-
-                //_mailService.SendEmail(domainModel, teamKey);
+                await _mailService.SendEmail(domainModel, teamKey);
             }
         }
 
-        private void SaveLogFailed(DomainModel domainModel)
+        private async Task<bool> SaveLogFailed(DomainModel domainModel)
         {
             domainModel.Last_Fail = DateTime.Now;
             var logEntry = new LogModel
@@ -176,6 +175,7 @@ namespace DashBoard.Business.Services
             };
             _context.Logs.Add(logEntry);
             _context.SaveChanges();
+           return await _mailService.SendEmail(domainModel, teamKey);
         }
 
         private static DomainModel GetDomainModel(DomainForTestDto domain)
@@ -192,7 +192,7 @@ namespace DashBoard.Business.Services
                 Auth_User = domain.Auth_User,
                 Auth_Password = domain.Auth_Password,
                 Parameters = domain.Parameters,
-                Active = domain.Active,
+                Active = true,
                 Interval_Ms = 4000
             };
 
