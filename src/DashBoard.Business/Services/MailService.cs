@@ -42,7 +42,7 @@ namespace DashBoard.Business.Services
 
             if (logs.Count > 0)
             {
-                datePass = logs.First().Log_Date.AddSeconds(20) > blackoutTime;
+                datePass = logs.First().Log_Date.AddSeconds(-20) < blackoutTime;
 
                 if (datePass)
                 {
@@ -56,27 +56,47 @@ namespace DashBoard.Business.Services
 
                     if (notifiedPass)
                     {
-                        var client = new SendGridClient("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");
-                        var from = new EmailAddress("notify@watchhound.com", "Watch Hound");
-                        var subject = "Watch Hound - Something wrong with  " + domainModel.Service_Name;
-                        var to = new EmailAddress(domainModel.Notification_Email, "Watch Hound");
-                        var plainTextContent = "Something wrong with  " + domainModel.Service_Name;
-                        var htmlContent = "";//"<strong>and easy to do anywhere, even with C#</strong>";
-                        var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
-                        var response = await client.SendEmailAsync(msg);
-
-                        var aLog = logs.Last();
-
-                        if (aLog != null)
+                        if (IsValidEmail(domainModel.Notification_Email))
                         {
-                            aLog.Notified = true;
-                            _context.Logs.Update(aLog);
-                            _context.SaveChanges();
+                            var client = new SendGridClient("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");
+                            var from = new EmailAddress("notify@watchhound.com", "Watch Hound");
+                            var subject = "Watch Hound - Something wrong with  " + domainModel.Service_Name;
+                            var to = new EmailAddress(domainModel.Notification_Email, "Watch Hound");
+                            var plainTextContent = "Something wrong with  " + domainModel.Service_Name;
+                            var htmlContent = "";//"<strong>and easy to do anywhere, even with C#</strong>";
+                            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+                            var response = await client.SendEmailAsync(msg);
+
+                            var aLog = logs.Last();
+
+                            if (response.StatusCode == System.Net.HttpStatusCode.Accepted)
+                            {
+                                if (aLog != null)
+                                {
+                                    aLog.Notified = true;
+                                    _context.Logs.Update(aLog);
+                                    _context.SaveChanges();
+                                }
+                            }
                         }
                     }
                 }                
             }
             return true;
         }
+
+        private bool IsValidEmail(string email)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
     }
 }

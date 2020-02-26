@@ -106,12 +106,8 @@ namespace DashBoard.Business.Services
                 sw.Stop();
 
                 if (domainModel.Id != -555 && domainModel.Service_Name != "ModelForTesting")
-                {
-                    domainModel.Last_Fail = DateTime.Now;
+                {                    
                     await SaveLog(domainModel, response);
-                    _context.Domains.Update(domainModel);
-                    _context.SaveChanges();
-
                 }
 
                 return GetResponseObject(domainModel, sw, response);
@@ -120,10 +116,7 @@ namespace DashBoard.Business.Services
             {
                 if (domainModel.Id != -555 && domainModel.Service_Name != "ModelForTesting")
                 {
-                    domainModel.Last_Fail = DateTime.Now;
                     await SaveLogFailed(domainModel);
-                    _context.Domains.Update(domainModel);
-                    _context.SaveChanges();
                 }
                 
                 return GetFailObject(domainModel);
@@ -163,6 +156,9 @@ namespace DashBoard.Business.Services
                 };
                 _context.Logs.Add(logEntry);
                 _context.SaveChanges();
+                domainModel.Last_Fail = DateTime.Now;
+                _context.Domains.Update(domainModel);
+                _context.SaveChanges();
                 return await _mailService.SendEmail(domainModel, teamKey);
             }
             return false;
@@ -170,7 +166,7 @@ namespace DashBoard.Business.Services
 
         private async Task<bool> SaveLogFailed(DomainModel domainModel)
         {
-            domainModel.Last_Fail = DateTime.Now;
+            
             var logEntry = new LogModel
             {
                 Domain_Id = domainModel.Id,
@@ -180,7 +176,10 @@ namespace DashBoard.Business.Services
             };
             _context.Logs.Add(logEntry);
             _context.SaveChanges();
-           return await _mailService.SendEmail(domainModel, teamKey);
+            domainModel.Last_Fail = DateTime.Now;
+            _context.Domains.Update(domainModel);
+            _context.SaveChanges();
+            return await _mailService.SendEmail(domainModel, teamKey);
         }
 
         private static DomainModel GetDomainModel(DomainForTestDto domain)
