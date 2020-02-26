@@ -14,7 +14,7 @@ namespace DashBoard.Data.Entities
         [Required]
         public string Service_Name { get; set; }
         [Required]
-        //[Url] uzkomentuoju, nes neaisku, dar kokius linkus pinginsim
+        [Url]
         public string Url { get; set; }
         [Range(0, 1)]
         public ServiceType Service_Type { get; set; } //EF in SQL enums saves as int.

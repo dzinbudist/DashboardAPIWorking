@@ -9,5 +9,6 @@ namespace DashBoard.Data.Entities
         public DateTime Log_Date { get; set; }
         public string Error_Text { get; set; }
         public Guid Team_Key { get; set; }
+        public bool Notified { get; set; } = false;
     }
 }
