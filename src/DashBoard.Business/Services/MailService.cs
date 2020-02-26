@@ -42,7 +42,7 @@ namespace DashBoard.Business.Services
 
             if (logs.Count > 0)
             {
-                datePass = logs.First().Log_Date.AddSeconds(-20) < blackoutTime;
+                datePass = logs.First().Log_Date.AddSeconds(-30) <= blackoutTime;
 
                 if (datePass)
                 {

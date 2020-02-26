@@ -156,7 +156,7 @@ namespace DashBoard.Business.Services
                 };
                 _context.Logs.Add(logEntry);
                 _context.SaveChanges();
-                domainModel.Last_Fail = DateTime.Now;
+                domainModel.Last_Fail = DateTime.Now.AddHours(2);
                 _context.Domains.Update(domainModel);
                 _context.SaveChanges();
                 return await _mailService.SendEmail(domainModel, teamKey);
@@ -176,7 +176,7 @@ namespace DashBoard.Business.Services
             };
             _context.Logs.Add(logEntry);
             _context.SaveChanges();
-            domainModel.Last_Fail = DateTime.Now;
+            domainModel.Last_Fail = DateTime.Now.AddHours(2);
             _context.Domains.Update(domainModel);
             _context.SaveChanges();
             return await _mailService.SendEmail(domainModel, teamKey);
