@@ -16,7 +16,7 @@ namespace DashBoard.Business.Services
         IEnumerable<UserModelDto> GetAll(string userId);
         UserModelDto GetById(int id, string userId);
         User Create(RegisterModelDto model, string password, string userId);
-        void Update(int id, UpdateModelDto model, string userId);
+        string Update(int id, UpdateModelDto model, string userId);
         string Delete(int id, string userId);
     }
 
@@ -123,7 +123,7 @@ namespace DashBoard.Business.Services
 
             return user; // method returns entity model, but it's not used in controller. So no need for DTO here.
         }
-        public void Update(int id, UpdateModelDto model, string userId)
+        public string Update(int id, UpdateModelDto model, string userId)
         {
 
             //cia nera password checkinngo !!!
@@ -207,13 +207,13 @@ namespace DashBoard.Business.Services
             }
             // update role if provided and check if user is admin.
 
-            if (userMakingThisUpdate.Id == user.Id)
-            {
-                if (userMakingThisUpdate.Role == Role.Admin)
-                {
-                    user.Role = Role.Admin;
-                }
-            }
+            //if (userMakingThisUpdate.Id == user.Id)
+            //{
+            //    if (userMakingThisUpdate.Role == Role.Admin)
+            //    {
+            //        user.Role = Role.Admin;
+            //    }
+            //}
 
             if (userMakingThisUpdate.Role.Equals("Admin") && model.Role != user.Role)
             {
@@ -226,6 +226,7 @@ namespace DashBoard.Business.Services
                     if (userMakingThisUpdate.Role == Role.Admin)
                     {
                         user.Role = Role.Admin;
+                        return "notAllowed";
                     }
                 }
                 else
@@ -233,14 +234,13 @@ namespace DashBoard.Business.Services
                     user.Role = model.Role;
                 }                
             }
-            
-
 
             user.Date_Modified = DateTime.Now;
             user.Modified_By = userMakingThisUpdate.Id;
 
             _context.Users.Update(user);
             _context.SaveChanges();
+            return "ok";
         }
 
         public string Delete(int id, string userId)
@@ -249,7 +249,6 @@ namespace DashBoard.Business.Services
             var teamKey = userMakingThisDelete.Team_Key;
             //check if there is such a user in team with such Id.
             var user = _context.Users.FirstOrDefault(x => x.Id == id && x.Team_Key == teamKey);
-
 
             if (user != null)
             {

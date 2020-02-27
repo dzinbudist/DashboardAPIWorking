@@ -12,7 +12,7 @@ namespace DashBoard.Business.Services
 {
     public interface IMailService
     {
-        Task<bool> SendEmail(DomainModel domainModel, Guid teamKey);
+        Task<bool> SendEmail(DomainModel domainModel, Guid teamKey, string responseCode);
     }
     public class MailService: IMailService
     {
@@ -21,7 +21,7 @@ namespace DashBoard.Business.Services
         {
             _context = context;
         }
-        public async Task<bool> SendEmail(DomainModel domainModel, Guid teamKey)
+        public async Task<bool> SendEmail(DomainModel domainModel, Guid teamKey, string responseCode)
         {
             //double intervalMultiplier;
             bool datePass = false;
@@ -62,8 +62,9 @@ namespace DashBoard.Business.Services
                             var from = new EmailAddress("notify@watchhound.com", "Watch Hound");
                             var subject = "Watch Hound - Something wrong with  " + domainModel.Service_Name;
                             var to = new EmailAddress(domainModel.Notification_Email, "Watch Hound");
-                            var plainTextContent = "Something wrong with  " + domainModel.Service_Name;
-                            var htmlContent = "";//"<strong>and easy to do anywhere, even with C#</strong>";
+                            var plainTextContent = "";//"Something wrong with  " + domainModel.Service_Name;
+                            var htmlContent = "<p>Something wrong with</p>  <strong>" + domainModel.Service_Name + "</strong><br>" +
+                                              "<p>Endpoint:  </p><strong>" + domainModel.Url + "</strong><br>" + "<p>Error code:  </p><strong>" + responseCode + "</strong>";
                             var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
                             var response = await client.SendEmailAsync(msg);
 
