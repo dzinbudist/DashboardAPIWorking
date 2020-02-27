@@ -128,8 +128,17 @@ namespace DashBoard.Web.Controllers
             {
                 var userId = LoggedInUser;
                 // update user 
-                _userService.Update(id, model, userId);
-                return Ok();
+                var result = _userService.Update(id, model, userId);
+                
+                if (result == "notAllowed")
+                {
+                    return StatusCode(403);
+                }
+                else
+                {
+                    return Ok();
+                }
+                
             }
             catch (AppException ex)
             {
@@ -153,7 +162,7 @@ namespace DashBoard.Web.Controllers
             {
                 return NotFound();
             }
-            else if (result == "notFound")
+            else if (result == "notAllowed")
             {
                 return StatusCode(403);
             }

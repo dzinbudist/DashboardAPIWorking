@@ -159,7 +159,7 @@ namespace DashBoard.Business.Services
                 domainModel.Last_Fail = DateTime.Now.AddHours(2);
                 _context.Domains.Update(domainModel);
                 _context.SaveChanges();
-                return await _mailService.SendEmail(domainModel, teamKey);
+                return await _mailService.SendEmail(domainModel, teamKey, response.StatusCode.ToString());
             }
             return false;
         }
@@ -179,7 +179,7 @@ namespace DashBoard.Business.Services
             domainModel.Last_Fail = DateTime.Now.AddHours(2);
             _context.Domains.Update(domainModel);
             _context.SaveChanges();
-            return await _mailService.SendEmail(domainModel, teamKey);
+            return await _mailService.SendEmail(domainModel, teamKey, "503");
         }
 
         private static DomainModel GetDomainModel(DomainForTestDto domain)
