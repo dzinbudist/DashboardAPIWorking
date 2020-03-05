@@ -39,5 +39,6 @@ namespace DashBoard.Data.Entities
         public DateTime Date_Created { get; set; } = DateTime.Now; //Useris negali keisti
         public DateTime Date_Modified { get; set; } = DateTime.Now; //Useris negali keisti
         public DateTime Last_Fail { get; set; } //Useris negali keisti
+        public DateTime Last_Notified { get; set; }
     }
 }
