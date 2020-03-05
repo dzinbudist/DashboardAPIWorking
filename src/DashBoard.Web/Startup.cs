@@ -31,18 +31,7 @@ namespace DashBoard.Web
         {
             // Register the Swagger services
             services.AddSwaggerDocument();
-
-            //Uzkomentinau sita koda, ir naudojam tik DataContext su SQLserver:
             services.AddDbContext<DataContext>(options => options.UseSqlServer(_configuration["ConnectionStrings:WebApiDatabase"]));
-            //****
-            // use sql server db in production and sqlite db in development
-            //if (_env.IsProduction())
-            //    services.AddDbContext<DataContext>();
-            //else
-            //    services.AddDbContext<DataContext, SqliteDataContext>();
-            //****
-
-
             services.AddCors();
             services.AddControllers();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -87,13 +76,16 @@ namespace DashBoard.Web
                 };
             });
 
-            // configure DI for application services
+            // configure DI for application services        
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IDomainService, DomainService>();
             services.AddScoped<ILogsService, LogsService>();
             services.AddScoped<IRequestService, RequestsService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IMailService, MailService>();
+            services.AddHostedService<BackgroundMailService>();            
+
+ 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

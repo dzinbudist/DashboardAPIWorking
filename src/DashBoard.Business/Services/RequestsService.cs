@@ -10,12 +10,13 @@ using DashBoard.Data.Entities;
 using System.Net.Http.Headers;
 using DashBoard.Business.DTOs.Domains;
 using System.Linq;
+using System.Dynamic;
 
 namespace DashBoard.Business.Services
 {
     public interface IRequestService
     {
-        Task<object> GetService(int id, DomainForTestDto domain, string userId);
+        Task<object> GetService(int id, DomainForTestDto domain, string userId, string requestType = "default", DomainModel domainBackground = null);
     }
     public class RequestsService: IRequestService
     {
@@ -28,15 +29,19 @@ namespace DashBoard.Business.Services
             _mailService = mailService;
         }
 
-        public async Task<object> GetService(int id, DomainForTestDto domain, string userId)
+        public async Task<object> GetService(int id, DomainForTestDto domain, string userId, string requestType = "default", DomainModel domainBackground = null)
         {
             DomainModel domainModel;
 
-            if (domain == null)
+            if (domain == null && requestType == "default")
             {
                 var user = await _context.Users.FindAsync(Convert.ToInt32(userId));
                 teamKey = user.Team_Key;
                 domainModel = _context.Domains.FirstOrDefault(x => x.Id == id && x.Deleted == false && x.Team_Key == teamKey);
+            }
+            else if (domainBackground != null && requestType == "background")
+            {
+                domainModel = domainBackground;
             }
             else
             {    
@@ -110,7 +115,10 @@ namespace DashBoard.Business.Services
                     await SaveLog(domainModel, response);
                 }
 
-                return GetResponseObject(domainModel, sw, response);
+                var data = response.ToString();
+                var pageContents = await response.Content.ReadAsStringAsync();
+
+                return GetResponseObject(domainModel, sw, response, pageContents);
             }
             catch
             {
@@ -132,13 +140,14 @@ namespace DashBoard.Business.Services
             };
         }
 
-        private static object GetResponseObject(DomainModel domainModel, Stopwatch sw, HttpResponseMessage response)
+        private static object GetResponseObject(DomainModel domainModel, Stopwatch sw, HttpResponseMessage response, string dataText)
         {
             return new
             {
                 DomainUrl = domainModel.Url,
                 Status = response.StatusCode,
-                RequestTime = sw.ElapsedMilliseconds
+                RequestTime = sw.ElapsedMilliseconds,
+                Response = dataText
             };
         }
 
@@ -156,17 +165,22 @@ namespace DashBoard.Business.Services
                 };
                 _context.Logs.Add(logEntry);
                 _context.SaveChanges();
+
+                var result = await _mailService.SendEmailNew(domainModel, domainModel.Team_Key, response.StatusCode.ToString());
                 domainModel.Last_Fail = DateTime.Now.AddHours(2);
+                if (result)
+                {
+                    domainModel.Last_Notified = DateTime.Now;
+                }                
                 _context.Domains.Update(domainModel);
                 _context.SaveChanges();
-                return await _mailService.SendEmailJet(domainModel, teamKey, response.StatusCode.ToString());
+                return result;
             }
             return false;
         }
 
         private async Task<bool> SaveLogFailed(DomainModel domainModel)
-        {
-            
+        {            
             var logEntry = new LogModel
             {
                 Domain_Id = domainModel.Id,
@@ -176,10 +190,16 @@ namespace DashBoard.Business.Services
             };
             _context.Logs.Add(logEntry);
             _context.SaveChanges();
+
+            var result = await _mailService.SendEmailNew(domainModel, domainModel.Team_Key, "503");
             domainModel.Last_Fail = DateTime.Now.AddHours(2);
+            if (result)
+            {
+                domainModel.Last_Notified = DateTime.Now;
+            }
             _context.Domains.Update(domainModel);
             _context.SaveChanges();
-            return await _mailService.SendEmailJet(domainModel, teamKey, "503");
+            return result;
         }
 
         private static DomainModel GetDomainModel(DomainForTestDto domain)

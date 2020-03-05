@@ -15,6 +15,7 @@ namespace DashBoard.Business.Services
 {
     public interface IMailService
     {
+        Task<bool> SendEmailNew(DomainModel domainModel, Guid teamKey, string responseCode);
         Task<bool> SendEmail(DomainModel domainModel, Guid teamKey, string responseCode);
         Task<bool> SendEmailJet(DomainModel domainModel, Guid teamKey, string responseCode);
     }
@@ -25,6 +26,45 @@ namespace DashBoard.Business.Services
         {
             _context = context;
         }
+
+        public async Task<bool> SendEmailNew(DomainModel domainModel, Guid teamKey, string responseCode)
+        {
+            string logList = "";
+
+            if (domainModel.Last_Notified <= DateTime.Now.AddHours(-1))
+            {
+                var logs = _context.Logs.Where(x => x.Domain_Id == domainModel.Id && x.Team_Key == teamKey && x.Log_Date >= DateTime.Now.AddHours(-1)).OrderBy(x => x.Log_Date).ToList();
+
+                if (logs.Count > 0)
+                {
+                    foreach (LogModel aModel in logs)
+                    { 
+                       logList = logList + $"<li>Log time: {aModel.Log_Date.ToString("yyyy-mm-dd HH:mm tt")}. Response: {aModel.Error_Text}</li><br>";    
+                    }
+
+                    if (IsValidEmail(domainModel.Notification_Email))
+                    {
+                        var client = new SendGridClient("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");
+                        var from = new EmailAddress("notify@watchhound.com", "Watch Hound");
+                        var subject = "Watch Hound - Something wrong with  " + domainModel.Service_Name;
+                        var to = new EmailAddress(domainModel.Notification_Email, "Watch Hound");
+                        var plainTextContent = "";//"Something wrong with  " + domainModel.Service_Name;
+                        var htmlContent = "<p>Something wrong with</p>  <strong>" + domainModel.Service_Name + "</strong><br>" +
+                                          "<p>Endpoint:  </p><strong>" + domainModel.Url + "</strong><br>" + "<p>Last hour logs:  </p><ul>" + logList + "</ul>";
+                        var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+                        var response = await client.SendEmailAsync(msg);
+
+                        if (response.StatusCode == System.Net.HttpStatusCode.Accepted)
+                        {
+                            return true;
+                        }
+                    }
+                }                
+            }
+            return false;
+        }
+
+
         public async Task<bool> SendEmail(DomainModel domainModel, Guid teamKey, string responseCode)
         {
             //double intervalMultiplier;
