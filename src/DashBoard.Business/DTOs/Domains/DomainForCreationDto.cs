@@ -26,6 +26,5 @@ namespace DashBoard.Business.DTOs.Domains
         public int Interval_Ms { get; set; } = 600000; //default, jei nieko neiveda is front-end
         public int Latency_Threshold_Ms { get; set; } = 60000;
         public bool Active { get; set; } = true; //Default reiksme
-        public Guid Team_Key { get; set; }
     }
 }

@@ -36,7 +36,7 @@ namespace DashBoard.Business.Services
         {
             var userMakingThisRequest = _context.Users.Find(Convert.ToInt32(userId));
             var teamKey = userMakingThisRequest.Team_Key;
-            var logs = _context.Logs.Where(x => x.Domain_Id == id && x.Team_Key == teamKey).ToList();
+            var logs = _context.Logs.Where(x => x.Domain_Id == id && x.Team_Key == teamKey).OrderByDescending(x => x.Id).ToList();
             var logsDto = _mapper.Map<IEnumerable<LogModelDto>>(logs);
             return logsDto.Any() ? logsDto : null;
         }

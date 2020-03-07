@@ -161,7 +161,8 @@ namespace DashBoard.Business.Services
                     Domain_Id = domainModel.Id,
                     Log_Date = DateTime.Now,
                     Error_Text = response.StatusCode.ToString(),
-                    Team_Key = domainModel.Team_Key
+                    Team_Key = domainModel.Team_Key,
+                    Service_Name = domainModel.Service_Name
                 };
                 _context.Logs.Add(logEntry);
                 _context.SaveChanges();
@@ -186,7 +187,8 @@ namespace DashBoard.Business.Services
                 Domain_Id = domainModel.Id,
                 Log_Date = DateTime.Now,
                 Error_Text = "503",
-                Team_Key = domainModel.Team_Key
+                Team_Key = domainModel.Team_Key,
+                Service_Name = domainModel.Service_Name
             };
             _context.Logs.Add(logEntry);
             _context.SaveChanges();

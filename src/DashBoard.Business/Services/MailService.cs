@@ -5,11 +5,13 @@ using SendGrid;
 using SendGrid.Helpers.Mail;
 using DashBoard.Data.Entities;
 using DashBoard.Data.Data;
+using DashBoard.Business.Helpers;
 using System.Threading.Tasks;
 using System.Linq;
 using Mailjet.Client;
 using Mailjet.Client.Resources;
 using Newtonsoft.Json.Linq;
+using Microsoft.Extensions.Options;
 
 namespace DashBoard.Business.Services
 {
@@ -22,9 +24,11 @@ namespace DashBoard.Business.Services
     public class MailService: IMailService
     {
         private readonly DataContext _context;
-        public MailService(DataContext context)
+        private readonly AppMailSettings _mailSettings;
+        public MailService(DataContext context, IOptions<AppMailSettings> mailSettings)
         {
             _context = context;
+            _mailSettings = mailSettings.Value;
         }
 
         public async Task<bool> SendEmailNew(DomainModel domainModel, Guid teamKey, string responseCode)
@@ -39,18 +43,18 @@ namespace DashBoard.Business.Services
                 {
                     foreach (LogModel aModel in logs)
                     { 
-                       logList = logList + $"<li>Log time: {aModel.Log_Date.ToString("yyyy-mm-dd HH:mm tt")}. Response: {aModel.Error_Text}</li><br>";    
+                       logList = logList + $"<li>Log time: {aModel.Log_Date.ToString("yyyy-MM-dd HH:mm")}. Response: {aModel.Error_Text}</li><br>";    
                     }
 
                     if (IsValidEmail(domainModel.Notification_Email))
                     {
-                        var client = new SendGridClient("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");
+                        var client = new SendGridClient(_mailSettings.SendGridKey);
                         var from = new EmailAddress("notify@watchhound.com", "Watch Hound");
                         var subject = "Watch Hound - Something wrong with  " + domainModel.Service_Name;
                         var to = new EmailAddress(domainModel.Notification_Email, "Watch Hound");
                         var plainTextContent = "";//"Something wrong with  " + domainModel.Service_Name;
-                        var htmlContent = "<p>Something wrong with</p>  <strong>" + domainModel.Service_Name + "</strong><br>" +
-                                          "<p>Endpoint:  </p><strong>" + domainModel.Url + "</strong><br>" + "<p>Last hour logs:  </p><ul>" + logList + "</ul>";
+                        var htmlContent = "<span>A problem occurred with: </span>  <strong>" + domainModel.Service_Name + "</strong><br>" +
+                                          "<span>Endpoint: </span><strong>" + domainModel.Url + "</strong><br>" + "<p>Last hour logs:  </p><ul>" + logList + "</ul>";
                         var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
                         var response = await client.SendEmailAsync(msg);
 
@@ -67,19 +71,8 @@ namespace DashBoard.Business.Services
 
         public async Task<bool> SendEmail(DomainModel domainModel, Guid teamKey, string responseCode)
         {
-            //double intervalMultiplier;
             bool datePass = false;
             bool notifiedPass = true;
-
-            //if (domainModel.Interval_Ms < 240000) //600000
-            //{
-            //    double intervalMultiplierDouble = 240000 / domainModel.Interval_Ms;
-            //    intervalMultiplier = Math.Round(intervalMultiplierDouble, MidpointRounding.AwayFromZero);
-            //}
-            //else
-            //{
-            //    intervalMultiplier = 1;
-            //}
 
             var blackoutTime = DateTime.Now.AddMinutes(-10);//DateTime.Now.AddMilliseconds(-(domainModel.Interval_Ms * intervalMultiplier));
             var logs = _context.Logs.Where(x => x.Domain_Id == domainModel.Id && x.Team_Key == teamKey && x.Log_Date >= blackoutTime).OrderBy(x => x.Log_Date).ToList();
@@ -102,7 +95,7 @@ namespace DashBoard.Business.Services
                     {
                         if (IsValidEmail(domainModel.Notification_Email))
                         {
-                            var client = new SendGridClient("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");
+                            var client = new SendGridClient("");
                             var from = new EmailAddress("notify@watchhound.com", "Watch Hound");
                             var subject = "Watch Hound - Something wrong with  " + domainModel.Service_Name;
                             var to = new EmailAddress(domainModel.Notification_Email, "Watch Hound");
@@ -146,19 +139,8 @@ namespace DashBoard.Business.Services
 
         public async Task<bool> SendEmailJet(DomainModel domainModel, Guid teamKey, string responseCode)
         {
-            //double intervalMultiplier;
             bool datePass = false;
             bool notifiedPass = true;
-
-            //if (domainModel.Interval_Ms < 240000) //600000
-            //{
-            //    double intervalMultiplierDouble = 240000 / domainModel.Interval_Ms;
-            //    intervalMultiplier = Math.Round(intervalMultiplierDouble, MidpointRounding.AwayFromZero);
-            //}
-            //else
-            //{
-            //    intervalMultiplier = 1;
-            //}
 
             var blackoutTime = DateTime.Now.AddMinutes(-5);//DateTime.Now.AddMilliseconds(-(domainModel.Interval_Ms * intervalMultiplier));
             var logs = _context.Logs.Where(x => x.Domain_Id == domainModel.Id && x.Team_Key == teamKey && x.Log_Date >= blackoutTime).OrderBy(x => x.Log_Date).ToList();
@@ -181,7 +163,7 @@ namespace DashBoard.Business.Services
                     {
                         if (IsValidEmail(domainModel.Notification_Email))
                         {
-                            MailjetClient client = new MailjetClient("a73620d74b8a7717f2ff320bcf7c47b0", "968e06d73b9d95c5ad79bdfee153051b")
+                            MailjetClient client = new MailjetClient("")
                             {
                                 Version = ApiVersion.V3_1,
                             };
