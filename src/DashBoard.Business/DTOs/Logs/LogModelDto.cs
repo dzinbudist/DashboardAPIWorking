@@ -8,6 +8,7 @@ namespace DashBoard.Business.DTOs.Logs
         public int Domain_Id { get; set; }
         public DateTime Log_Date { get; set; }
         public string Error_Text { get; set; }
-        public Guid Team_Key { get; set; }
+        public string Service_Name { get; set; }
+
     }
 }

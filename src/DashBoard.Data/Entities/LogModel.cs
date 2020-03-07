@@ -10,5 +10,6 @@ namespace DashBoard.Data.Entities
         public string Error_Text { get; set; }
         public Guid Team_Key { get; set; }
         public bool Notified { get; set; } = false;
+        public string Service_Name { get; set; }
     }
 }

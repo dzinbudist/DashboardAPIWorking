@@ -10,6 +10,5 @@ namespace DashBoard.Business.DTOs.Users
         public string Username { get; set; }
         public string UserEmail { get; set; }
         public string Role { get; set; }
-        public Guid Team_Key { get; set; } 
     }
 }

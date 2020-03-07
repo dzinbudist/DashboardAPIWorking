@@ -5,6 +5,7 @@ using AutoMapper;
 using DashBoard.Business.Services;
 using DashBoard.Data.Data;
 using DashBoard.Web.Helpers;
+using DashBoard.Business.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -20,29 +21,69 @@ namespace DashBoard.Web
         private readonly IWebHostEnvironment _env;
         private readonly IConfiguration _configuration;
 
-        public Startup(IWebHostEnvironment env, IConfiguration configuration)
+        public Startup(IWebHostEnvironment env)  //IConfiguration configuration
         {
             _env = env;
-            _configuration = configuration;
+            //_configuration = configuration;
+
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(_env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddEnvironmentVariables();
+
+            _configuration = builder.Build();
+
+            
+            //if (env.Iis)
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            var connectionString = Environment.GetEnvironmentVariable("WATCHHOUNDAPI_CONNECTIONSTRING");
+            var userSecret = Environment.GetEnvironmentVariable("USER_SECRET");
+            var sendGridKey = Environment.GetEnvironmentVariable("SENDGRID_KEY");
+
             // Register the Swagger services
+
+
             services.AddSwaggerDocument();
-            services.AddDbContext<DataContext>(options => options.UseSqlServer(_configuration["ConnectionStrings:WebApiDatabase"]));
             services.AddCors();
             services.AddControllers();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            // configure strongly typed settings objects
-            var appSettingsSection = _configuration.GetSection("AppSettings");
-            services.Configure<AppSettings>(appSettingsSection);
+            if (environment == "Production")
+            {
+                services.AddDbContext<DataContext>(options => options.UseSqlServer(connectionString));
+            }
+            else
+            {
+                services.AddDbContext<DataContext>(options => options.UseSqlServer(_configuration["ConnectionStrings:WebApiDatabase"]));
+            }
 
-            // configure jwt authentication
-            var appSettings = appSettingsSection.Get<AppSettings>();
-            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+            services.Configure<AppSettings>(appSettings =>
+            {
+                appSettings.Secret = userSecret;
+            }
+            );
+
+            services.Configure<AppMailSettings>(sendGrid =>
+            {
+                sendGrid.SendGridKey = sendGridKey;
+            }
+            );
+
+            // configure strongly typed settings objects
+            //var appSettingsSection = _configuration.GetSection("AppSettings");  
+            //services.Configure<AppSettings>(appSettingsSection);
+
+            //// configure jwt authentication
+            //var appSettings = appSettingsSection.Get<AppSettings>();
+            //var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+            var key = Encoding.ASCII.GetBytes(userSecret);
+
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

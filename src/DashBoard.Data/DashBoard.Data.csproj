@@ -5,8 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\SqlServerMigrations\20200205105814_range_for_service_type_and_requesttype.cs" />
-    <Compile Remove="Migrations\SqlServerMigrations\20200205105814_range_for_service_type_and_requesttype.Designer.cs" />
+    <Compile Remove="Migrations\SqlServerMigrations\**" />
+    <EmbeddedResource Remove="Migrations\SqlServerMigrations\**" />
+    <None Remove="Migrations\SqlServerMigrations\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,10 +21,6 @@
     <Reference Include="Microsoft.AspNetCore.Mvc.Core">
       <HintPath>..\..\..\..\..\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\3.1.0\ref\netcoreapp3.1\Microsoft.AspNetCore.Mvc.Core.dll</HintPath>
     </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Migrations\SqlServerMigrations\" />
   </ItemGroup>
 
 </Project>
