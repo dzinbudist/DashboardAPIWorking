@@ -18,6 +18,8 @@ namespace DashBoard.Data.Entities
         public int Created_By { get; set; } 
         public int Modified_By { get; set; } 
         public DateTime Date_Created { get; set; } 
-        public DateTime Date_Modified { get; set; } = DateTime.Now; 
+        public DateTime Date_Modified { get; set; } = DateTime.Now;
+        public string RefreshToken { get; set; }
+        public DateTime RefreshTokenValidDate { get; set; }
     }
 }

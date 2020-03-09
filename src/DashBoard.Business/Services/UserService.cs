@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using AutoMapper;
 using DashBoard.Business.CustomExceptions;
 using DashBoard.Business.DTOs.Users;
@@ -18,6 +19,8 @@ namespace DashBoard.Business.Services
         User Create(RegisterModelDto model, string password, string userId);
         string Update(int id, UpdateModelDto model, string userId);
         string Delete(int id, string userId);
+        Task<User> GetUserModel(string userId);
+        Task<bool> UpdateUserRefreshToken(User user, string refreshToken);
     }
 
     public class UserService : IUserService
@@ -205,16 +208,8 @@ namespace DashBoard.Business.Services
                 user.PasswordHash = passwordHash;
                 user.PasswordSalt = passwordSalt;
             }
+
             // update role if provided and check if user is admin.
-
-            //if (userMakingThisUpdate.Id == user.Id)
-            //{
-            //    if (userMakingThisUpdate.Role == Role.Admin)
-            //    {
-            //        user.Role = Role.Admin;
-            //    }
-            //}
-
             if (userMakingThisUpdate.Role.Equals("Admin") && model.Role != user.Role)
             {
                 if (model.Role != "Admin" && model.Role != "User")
@@ -294,6 +289,33 @@ namespace DashBoard.Business.Services
                 {
                     if (computedHash[i] != storedHash[i]) return false;
                 }
+            }
+
+            return true;
+        }
+
+        public async Task<User> GetUserModel(string userId)
+        {
+            var user = _context.Users.First(c => c.Id == Convert.ToInt32(userId));
+
+            if (user == null)
+            {
+                return null;
+            }
+            return user;
+        }
+
+        public async Task<bool> UpdateUserRefreshToken(User user, string refreshToken)
+        {
+            try
+            {
+                user.RefreshToken = refreshToken;
+                user.RefreshTokenValidDate = DateTime.Now.AddDays(3);
+                _context.SaveChanges();
+            }
+            catch
+            {
+                return false;
             }
 
             return true;
