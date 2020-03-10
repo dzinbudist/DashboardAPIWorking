@@ -22,8 +22,8 @@ namespace DashBoard.Web.Controllers
 
         //Because there are multiple return types and paths in this type of action, liberal use of the[ProducesResponseType] attribute is necessary.
         [HttpGet]
-       [ProducesResponseType(StatusCodes.Status200OK)]
-       [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetAllLogs()
         {
             var userId = LoggedInUser;

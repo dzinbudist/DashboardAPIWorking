@@ -68,7 +68,7 @@ namespace Services.Tests
             using (var context = new DataContext(options))
             {
                 var service = new LogsService(context, mapper);
-                var result = service.GetLogsByDomainId(52, "3");
+                var result = service.GetLogsByDomainId(52, "3", 0);
                 //Assert
                 Assert.Equal(2, result.Count()); //domain id:52 and second team_key
                 Assert.Equal(52, result.First().Domain_Id);
