@@ -39,7 +39,7 @@ namespace Services.Tests
             using (var context = new DataContext(options))
             {
                 var service = new LogsService(context, mapper);
-                var result = service.GetAllLogs("1"); 
+                var result = service.GetAllLogs("1", ""); 
                 //Assert
                 Assert.Single(result); 
                 Assert.IsType<List<LogModelDto>>(result);

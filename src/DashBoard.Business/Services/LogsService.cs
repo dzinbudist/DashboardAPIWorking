@@ -10,7 +10,7 @@ namespace DashBoard.Business.Services
 
     public interface ILogsService
     {
-        IEnumerable<LogModelDto> GetAllLogs(string userId);
+        IEnumerable<LogModelDto> GetAllLogs(string userId, string date);
         IEnumerable<LogModelDto> GetLogsByDomainId(int id, string userId, int count);
     }
     public class LogsService : ILogsService
@@ -23,11 +23,23 @@ namespace DashBoard.Business.Services
             _context = context;
             _mapper = mapper;
         }
-        public IEnumerable<LogModelDto> GetAllLogs(string userId)
+        public IEnumerable<LogModelDto> GetAllLogs(string userId, string date)
         {
+            DateTime dateValue;
+
+            if (date != "")
+            {
+                if (!DateTime.TryParse(date, out dateValue))
+                    dateValue = DateTime.Now.AddDays(-3);
+            }
+            else
+            {
+                dateValue = DateTime.Now.AddDays(-3);
+            }
+
             var userMakingThisRequest = _context.Users.Find(Convert.ToInt32(userId));
             var teamKey = userMakingThisRequest.Team_Key;
-            var logs = _context.Logs.Where(x => x.Team_Key == teamKey).ToList();
+            var logs = _context.Logs.Where(x => x.Team_Key == teamKey && x.Log_Date > dateValue).OrderByDescending(x => x.Id).ToList();
             var logsDto = _mapper.Map<IEnumerable<LogModelDto>>(logs);
             return logsDto.Any() ? logsDto : null;
         }
