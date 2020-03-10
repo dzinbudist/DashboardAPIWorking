@@ -54,14 +54,17 @@ namespace DashBoard.Web
             services.AddControllers();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            if (environment == "Production")
-            {
-                services.AddDbContext<DataContext>(options => options.UseSqlServer(connectionString));
-            }
-            else
-            {
-                services.AddDbContext<DataContext>(options => options.UseSqlServer(_configuration["ConnectionStrings:WebApiDatabase"]));
-            }
+
+            services.AddDbContext<DataContext>(options => options.UseSqlServer(connectionString));
+
+            //if (environment == "Production")
+            //{
+                
+            //}
+            //else
+            //{
+            //    services.AddDbContext<DataContext>(options => options.UseSqlServer(_configuration["ConnectionStrings:WebApiDatabase"]));
+            //}
 
             services.Configure<AppSettings>(appSettings =>
             {

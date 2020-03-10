@@ -6,6 +6,8 @@ using DashBoard.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using System;
+using System.Threading.Tasks;
 
 namespace DashBoard.Web.Controllers
 {
@@ -19,10 +21,7 @@ namespace DashBoard.Web.Controllers
         private readonly AppSettings _appSettings;
         public string LoggedInUser => User.Identity.Name; //this gets current user ID. It doesn't work in controller. We have to pass it from here.
 
-        public UsersController(
-            IUserService userService,
-            IOptions<AppSettings> appSettings,
-            ITokenService tokenService)
+        public UsersController(IUserService userService, IOptions<AppSettings> appSettings, ITokenService tokenService)
         {
             _tokenService = tokenService;
             _userService = userService;
@@ -31,13 +30,15 @@ namespace DashBoard.Web.Controllers
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
-        public IActionResult Authenticate([FromBody]AuthenticateModelDto model)
+        public async Task<IActionResult> Authenticate([FromBody]AuthenticateModelDto model)
         {
             var user = _userService.Authenticate(model.Username, model.Password);
 
             if (user == null)
                 return BadRequest(new { message = "Username or password is incorrect" });
             var token = _tokenService.GenerateToken(user, _appSettings.Secret);
+            var newRefreshToken = _tokenService.GenerateRefreshToken();
+            await _userService.UpdateUserRefreshToken(user, newRefreshToken);
 
             // return basic user info and authentication token
             return Ok(new
@@ -47,8 +48,32 @@ namespace DashBoard.Web.Controllers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Role = user.Role,
-                Token = token
+                Token = token,
+                RefreshToke = newRefreshToken
             });
+        }
+
+        [AllowAnonymous]
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh(TokenRefresh tokenRefresh)
+        {
+            var principal = _tokenService.GetPrincipalFromExpiredToken(tokenRefresh.Token, _appSettings.Secret);
+            var userID = principal.Identity.Name; //this is mapped to the Name claim by default
+
+            var user = await _userService.GetUserModel(userID);
+            if (user == null || user.RefreshToken != tokenRefresh.RefreshToken || user.RefreshTokenValidDate < DateTime.Now) return BadRequest();
+
+            var newJwtToken = _tokenService.GenerateToken(user, _appSettings.Secret);
+            var newRefreshToken = _tokenService.GenerateRefreshToken();
+
+            if (await _userService.UpdateUserRefreshToken(user, newRefreshToken))
+                return new ObjectResult(new
+                {
+                    token = newJwtToken,
+                    refreshToken = newRefreshToken
+                });
+
+            return BadRequest();
         }
 
         [AllowAnonymous]
