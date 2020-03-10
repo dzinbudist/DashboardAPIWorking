@@ -38,10 +38,10 @@ namespace DashBoard.Web.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult GetLogsByDomain(int id)
+        public IActionResult GetLogsByDomain(int id, int count)
         {
             var userId = LoggedInUser;
-            var result = _logsService.GetLogsByDomainId(id, userId);
+            var result = _logsService.GetLogsByDomainId(id, userId, count);
             if (result == null)
             {
                 return NotFound(); //NoContent() is also an option here.

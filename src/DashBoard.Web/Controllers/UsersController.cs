@@ -6,6 +6,7 @@ using DashBoard.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using System;
 using System.Threading.Tasks;
 
 namespace DashBoard.Web.Controllers
@@ -53,14 +54,14 @@ namespace DashBoard.Web.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost]
-        public async Task<IActionResult> Refresh(string token, string refreshToken)
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh(TokenRefresh tokenRefresh)
         {
-            var principal = _tokenService.GetPrincipalFromExpiredToken(token, _appSettings.Secret);
+            var principal = _tokenService.GetPrincipalFromExpiredToken(tokenRefresh.Token, _appSettings.Secret);
             var userID = principal.Identity.Name; //this is mapped to the Name claim by default
 
             var user = await _userService.GetUserModel(userID);
-            if (user == null || user.RefreshToken != refreshToken) return BadRequest();
+            if (user == null || user.RefreshToken != tokenRefresh.RefreshToken || user.RefreshTokenValidDate < DateTime.Now) return BadRequest();
 
             var newJwtToken = _tokenService.GenerateToken(user, _appSettings.Secret);
             var newRefreshToken = _tokenService.GenerateRefreshToken();

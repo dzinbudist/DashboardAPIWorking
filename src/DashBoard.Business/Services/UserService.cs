@@ -311,7 +311,7 @@ namespace DashBoard.Business.Services
             {
                 user.RefreshToken = refreshToken;
                 user.RefreshTokenValidDate = DateTime.Now.AddDays(3);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
             catch
             {

@@ -11,7 +11,7 @@ namespace DashBoard.Business.Services
     public interface ILogsService
     {
         IEnumerable<LogModelDto> GetAllLogs(string userId);
-        IEnumerable<LogModelDto> GetLogsByDomainId(int id, string userId);
+        IEnumerable<LogModelDto> GetLogsByDomainId(int id, string userId, int count);
     }
     public class LogsService : ILogsService
     {
@@ -32,13 +32,23 @@ namespace DashBoard.Business.Services
             return logsDto.Any() ? logsDto : null;
         }
 
-        public IEnumerable<LogModelDto> GetLogsByDomainId(int id, string userId)
+        public IEnumerable<LogModelDto> GetLogsByDomainId(int id, string userId, int count)
         {
             var userMakingThisRequest = _context.Users.Find(Convert.ToInt32(userId));
             var teamKey = userMakingThisRequest.Team_Key;
-            var logs = _context.Logs.Where(x => x.Domain_Id == id && x.Team_Key == teamKey).OrderByDescending(x => x.Id).ToList();
-            var logsDto = _mapper.Map<IEnumerable<LogModelDto>>(logs);
-            return logsDto.Any() ? logsDto : null;
+
+            if (count > 0)
+            {
+                var logs = _context.Logs.Where(x => x.Domain_Id == id && x.Team_Key == teamKey).OrderByDescending(x => x.Id).Take(count).ToList();
+                var logsDto = _mapper.Map<IEnumerable<LogModelDto>>(logs);
+                return logsDto.Any() ? logsDto : null;
+            }
+            else
+            {
+                var logs = _context.Logs.Where(x => x.Domain_Id == id && x.Team_Key == teamKey).OrderByDescending(x => x.Id).ToList();
+                var logsDto = _mapper.Map<IEnumerable<LogModelDto>>(logs);
+                return logsDto.Any() ? logsDto : null;
+            }
         }
     }
 }
